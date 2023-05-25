@@ -1,13 +1,12 @@
 export function cardScan(scanned) {
     let barcode = scanned.replace("'", "")
     let scantype = "CAC"
-    let ScanLib = new Object()
-    let splitBarcode = new Object()
+    let ScanLib = {}
+    let splitBarcode = {}
 
     switch (barcode.charAt(0)) {
         case "@": 
-            if (barcode.substring(barcode.search(" ")-4,10) == "ANSI") {
-                let co = barcode.search(" ")-4
+            if (barcode.substring(barcode.search(" ")-4,10) === "ANSI") {
                 ScanLib["Rank"] = "CIV"
                 splitBarcode = barcode.split("\r\n")
 
