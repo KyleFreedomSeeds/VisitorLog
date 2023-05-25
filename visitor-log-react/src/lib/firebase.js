@@ -27,8 +27,8 @@ export const auth = firebase.auth()
 export function handleFirebaseError(err) {
   switch (err){
     case "Firebase: Error (auth/network-request-failed).": return "Check your internet connection and try again!";
-    case "Firebase: Error (auth/user-not-found).": return "A user with this email is not registered!";
-    case "Firebase: Error (auth/wrong-password).": return "Invalid password!";
+    case "Firebase: There is no user record corresponding to this identifier. The user may have been deleted. (auth/user-not-found).": return "A user with this email is not registered!";
+    case "Firebase: The password is invalid or the user does not have a password. (auth/wrong-password).": return "Invalid password!";
     default: return err
   }
 }
