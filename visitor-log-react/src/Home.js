@@ -37,7 +37,7 @@ function Home() {
           <FormProvider {...submitVisitor}>
             <SubmitvisitorModal/>
           </FormProvider>
-          <button onClick={() => {let badge = prompt("Enter Badge Number"); SignVisitorOut(badge)}}>Sign Out</button>
+          <button onClick={() => {let badge = prompt("Enter Badge Number"); SignVisitorOut(badge)}}>Sign Visitor Out</button>
         </div>
         <div>
           <table>

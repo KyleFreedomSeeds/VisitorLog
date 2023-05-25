@@ -57,12 +57,12 @@ function Login(){
           <button type='submit'>Login</button>
         </form>
         <p>
-          Don't have and account? 
-          <Link to='/register'>Create one here</Link>
+          Don't have an account? 
+          <Link to='/register'> Register</Link>
         </p>
         <p>
           Forgot your password?
-          <Link to='/reset-password'>Reset password</Link>
+          <Link to='/reset-password'> Reset password</Link>
         </p>
       </div>
     </div>
