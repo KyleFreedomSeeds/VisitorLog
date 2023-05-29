@@ -18,11 +18,19 @@ function Home() {
 
   const scanId = barcode => {
     if (barcode !== null) {
-    const visitorInfo = cardScan(barcode)
-    document.getElementById("manualSubmit").click()
-    submitVisitor.setValue("name", visitorInfo["LN"] + " " + visitorInfo["FN"] + " " + visitorInfo["MI"].substring(0,1))
-    submitVisitor.setValue("rank", visitorInfo["Rank"])
-    submitVisitor.setFocus("badge", {shouldSelect: true})
+      cardScan(barcode).then(visitorInfo => {
+        if (visitorInfo !== null) {
+          document.getElementById("manualSubmit").click()
+          console.log(visitorInfo)
+          if ("FMN" in visitorInfo) {
+            submitVisitor.setValue("name", visitorInfo["FMN"])
+          } else {
+            submitVisitor.setValue("name", visitorInfo["LN"] + " " + visitorInfo["FN"] + " " + visitorInfo["MI"].substring(0,1))
+          }
+          submitVisitor.setValue("rank", visitorInfo["Rank"])
+          submitVisitor.setFocus("badge", {shouldSelect: true})
+        }
+      })
     }
   }
 

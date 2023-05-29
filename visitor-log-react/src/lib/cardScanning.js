@@ -1,4 +1,6 @@
-export function cardScan(scanned) {
+import { checkDBIDS } from "./checkDBIDS"
+
+export async function cardScan(scanned) {
     let barcode = scanned.replace("'", "")
     let scantype = "CAC"
     let ScanLib = {}
@@ -79,7 +81,9 @@ export function cardScan(scanned) {
                 ScanLib["Rank"] = barcode.substring(60, 6 + 60).trim()
             }
             break;
-        default: return null
+        default: 
+            ScanLib = await checkDBIDS(scanned)
+            return ScanLib
     }
     return ScanLib
 }

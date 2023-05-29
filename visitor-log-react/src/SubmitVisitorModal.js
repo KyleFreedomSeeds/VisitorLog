@@ -12,7 +12,7 @@ function SubmitvisitorModal() {
   const { register, reset, handleSubmit, formState, setError } = useFormContext()
 
   async function submit(data) {
-    const valid = validateVisitor(data).then(valid => {
+    validateVisitor(data).then(valid => {
       if (valid !== null) {
         mutation.mutate({
           name: data.name.toUpperCase(),
