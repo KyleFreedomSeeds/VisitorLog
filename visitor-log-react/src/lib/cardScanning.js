@@ -6,7 +6,7 @@ export function cardScan(scanned) {
 
     switch (barcode.charAt(0)) {
         case "@": 
-            if (barcode.substring(barcode.search(" ")-4,10) === "ANSI") {
+            if (barcode.search("ANSI") !== -1) {
                 ScanLib["Rank"] = "CIV"
                 splitBarcode = barcode.split("\r\n")
 
@@ -22,46 +22,47 @@ export function cardScan(scanned) {
             }
             break;
         case "N":
-            if (barcode.length == 89) {
+            if (barcode.length === 89) {
                 //ScanLib["EDIPI"] = ConvDec(CStr(barcode.substring(9, 7)), 32)
-                ScanLib["FN"] = barcode.substring(16, 20);
-                ScanLib["LN"] = barcode.substring(36, 26);
-                ScanLib["PCC"] = barcode.substring(66, 1);
-                ScanLib["Rank"] = barcode.substring(70, 6);
-                ScanLib["MI"] = barcode.substring(89, 1);
+                ScanLib["FN"] = barcode.substring(15, 20 + 15).trim();
+                ScanLib["LN"] = barcode.substring(35, 26 + 35).trim();
+                ScanLib["PCC"] = barcode.substring(65, 1 + 65).trim();
+                ScanLib["Rank"] = barcode.substring(69, 6 + 69).trim();
+                ScanLib["MI"] = barcode.substring(88, 1 + 88).trim();
             }
             break;
         case "M":
-            if (barcode.length == 99) {
+            console.log("test M")
+            if (barcode.length === 99) {
                 //ScanLib.Add "EDIPI", ConvDec(Trim(barcode.substring(2, 7)), 32)
-                ScanLib["FN"] = barcode.substring(17, 20)
-                ScanLib["MI"] = barcode.substring(37, 1)
-                ScanLib["LN"] = barcode.substring(38, 26)
-                ScanLib["PCC"] = barcode.substring(71, 1)
-                if (barcode.substring(80, 5).charAt(0) == "M") {ScanLib["Rank"] = barcode.substring(75, 5)}
-                if (barcode.substring(80, 5).charAt(0) != "M") {ScanLib["Rank"] = barcode.substring(80, 5)}
+                ScanLib["FN"] = barcode.substring(16, 20 + 16).trim()
+                ScanLib["MI"] = barcode.substring(36, 1 + 36).trim()
+                ScanLib["LN"] = barcode.substring(37, 26 + 37).trim()
+                ScanLib["PCC"] = barcode.substring(70, 1 + 70).trim()
+                if (barcode.substring(80, 5 + 80).charAt(0) === "M") {ScanLib["Rank"] = barcode.substring(74, 5 + 74).trim()}
+                if (barcode.substring(80, 5 + 80).charAt(0) !== "M") {ScanLib["Rank"] = barcode.substring(79, 5 + 79).trim()}
             }
             break;
         case "4":
-            if (barcode.length == 100) {
+            if (barcode.length === 100) {
                 //ScanLib["EDIPI"] = ConvDec(barcode.substring(3, 7), 32)
-                ScanLib["FN"] = barcode.substring(18, 20)
-                ScanLib["MI"] = barcode.substring(38, 1)
-                ScanLib["LN"] = barcode.substring(39, 26)
-                ScanLib["PCC"] = barcode.substring(72, 1)
-                ScanLib["Rank"] = barcode.substring(76, 6)
+                ScanLib["FN"] = barcode.substring(17, 20 + 17).trim()
+                ScanLib["MI"] = barcode.substring(37, 1 + 37).trim()
+                ScanLib["LN"] = barcode.substring(38, 26 + 38).trim()
+                ScanLib["PCC"] = barcode.substring(71, 1 + 71).trim()
+                ScanLib["Rank"] = barcode.substring(75, 6 + 75).trim()
             }
-            if (barcode.length == 157) {
+            if (barcode.length === 157) {
                 //ScanLib["EDIPI"] = ConvDec(CStr(barcode.substring(3, 7)), 32)
-                ScanLib["FN"] = barcode.substring(18, 20)
-                ScanLib["MI"] = barcode.substring(38, 1)
-                ScanLib["LN"] = barcode.substring(39, 26)
-                ScanLib["PCC"] = barcode.substring(129, 1)
-                ScanLib["Rank"] = barcode.substring(133, 6)
+                ScanLib["FN"] = barcode.substring(17, 20 + 17).trim()
+                ScanLib["MI"] = barcode.substring(37, 1 + 37).trim()
+                ScanLib["LN"] = barcode.substring(38, 26 + 38).trim()
+                ScanLib["PCC"] = barcode.substring(128, 1 + 128).trim()
+                ScanLib["Rank"] = barcode.substring(132, 6 + 132).trim()
             }
             break;
         case "1":
-            // if (barcode.length == 18) {
+            // if (barcode.length === 18) {
             //     ScanLib.Add "EDIPI", ConvDec(barcode.substring(9, 7), 32)
             //     ScanLib.Add "PCC", barcode.substring(16, 1)
             //     userinfo = gigIDldap(False, , ScanLib("EDIPI") & ScanLib("PCC"))
@@ -70,12 +71,12 @@ export function cardScan(scanned) {
             //     ScanLib.Add "LN", userinfo(2)
             //     ScanLib.Add "Rank", userinfo(3)
             // }
-            if (barcode.length == 88) {
+            if (barcode.length === 88) {
                 //ScanLib["EDIPI"] = ConvDec(barcode.substring(9, 7), 32)
-                ScanLib["FN"] = barcode.substring(16, 20)
-                ScanLib["LN"] = barcode.substring(36, 26)
-                ScanLib["PCC"] = barcode.substring(66, 1)
-                ScanLib["Rank"] = barcode.substring(70, 6)
+                ScanLib["FN"] = barcode.substring(15, 20 + 15).trim()
+                ScanLib["LN"] = barcode.substring(35, 26 + 35).trim()
+                ScanLib["PCC"] = barcode.substring(65, 1 + 65).trim()
+                ScanLib["Rank"] = barcode.substring(60, 6 + 60).trim()
             }
             break;
         default: return null
