@@ -46,12 +46,12 @@ function Register() {
       // Create a new user with email and password using firebase
         createUserWithEmailAndPassword(auth, email, password)
         .then(() => {
+          userMutation.mutate({
+            dodaac: dodaac,
+            uid: auth.currentUser.uid}
+          )
           sendEmailVerification(auth.currentUser)   
           .then(() => {
-            userMutation.mutate({
-              dodaac: dodaac,
-              uid: auth.currentUser.uid}
-            )
             setTimeActive(true)
             navigate('/verify-email')
           }).catch((err) => alert(err.message))
