@@ -15,5 +15,5 @@ jobs:
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_VISITOR_LOG_D8B6C }}'
-          channelId: preview
+          channelId: live
           projectId: visitor-log-d8b6c
