@@ -12,8 +12,11 @@ import {onAuthStateChanged} from 'firebase/auth'
 import PrivateRoute from './PrivateRoute'
 import {Navigate} from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { FirebaseAppProvider } from 'reactfire';
+import { firebaseConfig } from 'lib/firebase';
+import RegisterDodaac from 'RegisterDodaac';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({defaultOptions: {queries: {cacheTime: 0}}});
 
 function App() {
 
@@ -27,6 +30,7 @@ function App() {
   }, [])
 
   return (
+    <FirebaseAppProvider firebaseConfig={firebaseConfig}>
     <QueryClientProvider client={queryClient}>
     <Router>
       <AuthProvider value={{currentUser, timeActive, setTimeActive}}>
@@ -46,6 +50,9 @@ function App() {
             ? <Register/>
             : <Navigate to='/' replace/>
           } />
+          <Route path="/register-dodaac" element={
+              <RegisterDodaac/>
+          } />
           <Route path="/reset-password" element={
             !currentUser?.emailVerified 
             ? <ResetPass/>
@@ -56,6 +63,7 @@ function App() {
       </AuthProvider>
   </Router>
   </QueryClientProvider>
+  </FirebaseAppProvider>
   );
 }
 

@@ -3,18 +3,34 @@ import { signOut } from 'firebase/auth'
 import { auth, db } from 'lib/firebase'
 import { collection, query, where } from "firebase/firestore"
 import SubmitvisitorModal from 'SubmitVisitorModal'
-import { useFirestoreQuery } from '@react-query-firebase/firestore'
 import { SignVisitorOut } from 'lib/SignVisitorOut'
 import { cardScan } from 'lib/cardScanning'
 import { FormProvider, useForm } from 'react-hook-form'
-
+import { useState, useEffect } from 'react'
+import { collectionData } from 'rxfire/firestore';
+import { combineLatest, switchMap } from 'rxjs'
 
 function Home() {
   //const {currentUser} = useAuthValue()
   //console.log(currentUser)
-  const ref = query(collection(db, "visitors"), where("signedOut", "==", "null"))
-  const visitors = useFirestoreQuery(["todos"], ref, {subscribe: true})
+  const [visitors, setVisitors] = useState()
   const submitVisitor = useForm()
+  const dodaacRef = query(collection(db, "users"), where("uid", "==", auth.currentUser.uid))
+  
+  useEffect(() => {
+    collectionData(dodaacRef, { idField: 'id' })
+    .pipe(
+      switchMap(dodaacs => {
+        return combineLatest(dodaacs.map(d => {
+          const ref = query(collection(db, "visitors"), where("signedOut", "==", "null"), where("dodaac", "==", d.dodaac))
+          return  collectionData(ref, {idField: 'id'})
+        }));
+      })
+    )
+    .subscribe(dodaac => 
+      setVisitors(dodaac[0])
+    );
+  },[])
 
   const scanId = barcode => {
     if (barcode !== null) {
@@ -61,21 +77,21 @@ function Home() {
               </tr>
             </thead>
             <tbody>
-              {visitors.status === "success" && visitors.data.docs.map(docSnap => {
-                          const visitor = docSnap.data();
-                          const date = new Date(visitor.created.seconds * 1000).toLocaleString();
-                          return(
-                          <tr key={docSnap.id}>
-                              <td>{visitor.name}</td>
-                              <td>{visitor.rank}</td>
-                              <td>{visitor.org}</td>
-                              <td>{visitor.dest}</td>
-                              <td>{visitor.escort}</td>
-                              <td>{visitor.badge}</td>
-                              <td>{date}</td>
-                          </tr>
-                      );
-                })}
+            {visitors === undefined && <tr><td>Loading...</td></tr>}
+            {visitors !== undefined && visitors.map(visitor => {
+              const date = new Date(visitor.created.seconds * 1000).toLocaleString();
+              return(
+              <tr key={visitor.id}>
+                  <td>{visitor.name}</td>
+                  <td>{visitor.rank}</td>
+                  <td>{visitor.org}</td>
+                  <td>{visitor.dest}</td>
+                  <td>{visitor.escort}</td>
+                  <td>{visitor.badge}</td>
+                  <td>{date}</td>
+              </tr>
+              );
+            })}
             </tbody>
           </table>
         </div>

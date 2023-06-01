@@ -4,13 +4,12 @@
 /node_modules
 /.pnp
 .pnp.js
+/public
 
 # testing
 /coverage
 
 # production
-pocketbase.exe
-start.ps1
 # misc
 .DS_Store
 .env.local

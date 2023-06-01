@@ -93,71 +93,13 @@ export async function cardScan(scanned) {
 'DoD ID Card Scanning Function Library
 'Version 23 August 2022
 'Author- MSgt Bob Kaster (robert.kaster@us.af.mil)
+'Ported to Javascript by- SrA Kyle Condon (kyle.condon@us.af.mil)
 ' Data used to develop this list came from the DMDC DoD ID Bar Codes & Software Development Kit, Version 7.5.1, Sep 2014
 '  and DMDC Memorandum "Changes to the Two-Dimensional Barcode on DoD Identification Cards", 15 Aug 2016
 ' Driver License data from AAMVA DL/ID Card Design Standard 2020
 ' - https://www.aamva.org/topics/driver-license-and-identification-standards and https://www.aamva.org/getmedia/99ac7057-0f4d-4461-b0a2-3a5532e1b35c/AAMVA-2020-DLID-Card-Design-Standard.pdf
 '**********************************************
 
-Public Function DumpLib()
-    ' Dumps current contents of ScanLib to Immediate window
-    If ScanLib.Exists("Err1") = True Then Exit Function
-    For Each key In ScanLib.Keys
-        If key <> "DCode" Then
-            Debug.Print key & " " & Len(ScanLib(key)) & " " & ScanLib(key)
-        End If
-    Next key
-End Function
-
-Public Function CardScan(barcode As String)
-
-NonSup:
-    Set rs = CurrentDb.OpenRecordset("SELECT * FROM tblOther WHERE DBIDS_ID = '" & barcode & "'")
-    If Not rs.EOF Then
-        ScanLib.Add "FN", rs.Fields("Name").value
-    Else
-        newName = getstring("Enter Full Name of Scanned Personnel")
-        DoCmd.Close acForm, "frmBarCap", acSaveNo
-        If newName = "Null" Then End
-        rs.AddNew
-        rs.Fields("DBIDS_ID").value = barcode
-        rs.Fields("Name").value = newName
-        rs.Update
-        ScanLib.Add "FN", newName
-    End If
-    
-    ScanLib.Add "Rank", "Civ"
-    ScanLib.Add "DCode", "111111111111111111"
-    rs.Close
-    Exit Function
-
-entererror:
-    ers = CurrentDb.OpenRecordset("tblErrors")
-    ers.AddNew
-    ers.Update
-    ers.MoveLast
-    ers.Edit
-    ers.Fields("Error Type").value = "Scan Error"
-    ers.Fields("Scanned").value = barcode
-    ers.Update
-ScanExit:
-    If ScanLib("Rank") = "" Then
-        userinfo = gigIDldap(False, , ScanLib("EDIPI") & ScanLib("PCC"))
-        ScanLib("Rank") = userinfo(3)
-    End If
-    If scantype = CAC And (ScanLib("Rank") = "" Or Not ScanLib.Exists("Rank") Or IsNull(ScanLib("Rank"))) Or ((Left(ScanLib("Rank"), 1) = "M") And ScanLib("Rank") <> "MSGT" And ScanLib("Rank") <> "MAJ" And ScanLib("Rank") <> "MSG") Then
-        Set ers = CurrentDb.OpenRecordset("tblErrors")
-        ers.AddNew
-        ers.Update
-        ers.MoveLast
-        ers.Edit
-        ers.Fields("Error Type").value = "Rank Error"
-        ers.Fields("Scanned").value = barcode
-        ers.Update
-    End If
-    barcode = ""
-    Exit Function
-End Function
 
 Public Function ConvDec(pNumber As String, pBase As Integer) As Double
 'ConvDec is able to convert numbers up to base 35 to base 10

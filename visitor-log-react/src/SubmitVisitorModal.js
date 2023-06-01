@@ -1,16 +1,21 @@
 import { useFirestoreCollectionMutation } from "@react-query-firebase/firestore"
 import { collection } from "firebase/firestore"
 import { validateVisitor } from "lib/validateVisitor"
-import { db } from "lib/firebase"
-import {  set, useFormContext } from "react-hook-form"
+import { db, auth } from "lib/firebase"
+import { useFormContext } from "react-hook-form"
 import Popup from "reactjs-popup"
+import { where, query } from "firebase/firestore"
 import "reactjs-popup/dist/index.css"
+import { useFirestoreCollectionData } from "reactfire"
+
 
 function SubmitvisitorModal() {
   const ref = collection(db, "visitors")
   const mutation = useFirestoreCollectionMutation(ref)
-  const { register, reset, handleSubmit, formState, setError } = useFormContext()
-
+  const { register, reset, handleSubmit, formState} = useFormContext()
+  const dodaacRef = query(collection(db, "users"), where("uid", "==", auth.currentUser.uid))
+  const dodaac = useFirestoreCollectionData(dodaacRef)
+  
   async function submit(data) {
     validateVisitor(data).then(valid => {
       if (valid !== null) {
@@ -23,7 +28,7 @@ function SubmitvisitorModal() {
           escort: data.escort.toUpperCase(),
           created: new Date(),
           signedOut: "null",
-          dodaac: "null",
+          dodaac: dodaac.data[0].dodaac,
         })
         reset()
       }
