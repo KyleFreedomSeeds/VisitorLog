@@ -37,7 +37,7 @@ function SubmitvisitorModal() {
 
   return (
     <>
-    <Popup trigger={<button id="manualSubmit">Manual Submit</button>} modal>
+    <Popup trigger={<button id="manualSubmit">Manual Submit</button>} modal className="visitors">
       {
       close => (
         <div>

@@ -9,10 +9,12 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useState, useEffect } from 'react'
 import { collectionData } from 'rxfire/firestore';
 import { combineLatest, switchMap } from 'rxjs'
+import "css/home.css"
+import moment from 'moment/moment'
 
 function Home() {
-  //const {currentUser} = useAuthValue()
-  //console.log(currentUser)
+  const {currentUser} = useAuthValue()
+  console.log(currentUser.email)
   const [visitors, setVisitors] = useState()
   const submitVisitor = useForm()
   const dodaacRef = query(collection(db, "users"), where("uid", "==", auth.currentUser.uid))
@@ -51,19 +53,19 @@ function Home() {
   }
 
   return (
-      <div>
-        <div>
+      <div className="body">
+        <div className="header">
           <h1>Visitor Log</h1>
-          <span onClick={() => signOut(auth)}>Sign Out</span>
+          <p>Logged in as: {currentUser.email}<span onClick={() => signOut(auth)}>Sign Out</span></p>
         </div>
-        <div>
+        <div className="buttons">
           <button onClick={() => {let barcode = prompt("Scan ID"); scanId(barcode)}}>Scan ID</button>
           <FormProvider {...submitVisitor}>
             <SubmitvisitorModal/>
           </FormProvider>
           <button onClick={() => {let badge = prompt("Enter Badge Number"); SignVisitorOut(badge)}}>Sign Visitor Out</button>
         </div>
-        <div>
+        <div className="table">
           <table>
             <thead>
               <tr>
@@ -79,7 +81,7 @@ function Home() {
             <tbody>
             {visitors === undefined && <tr><td>Loading...</td></tr>}
             {visitors !== undefined && visitors.map(visitor => {
-              const date = new Date(visitor.created.seconds * 1000).toLocaleString();
+              const date = moment(new Date(visitor.created.seconds * 1000)).format("DD MMM YY h:mm a")
               return(
               <tr key={visitor.id}>
                   <td>{visitor.name}</td>

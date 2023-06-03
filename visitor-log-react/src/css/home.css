@@ -1,0 +1,237 @@
+  /* Modern styling with static background, button animations, and header span animation */
+
+  /* Body */
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #f3f1f0;
+    font-family: Arial, sans-serif;
+  }
+
+  .body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px;
+    background-color: #b19d4c;
+    padding: 10px 20px;
+    color: #ffffff;
+  }
+
+  .header h1 {
+    font-size: 24px;
+    color: #ffffff;
+    margin: 0;
+    text-align: center;
+  }
+
+  .header span {
+    cursor: pointer;
+    color: #ffffff;
+    text-decoration: underline;
+    transition: color 0.3s ease;
+    text-align: right;
+  }
+  
+  .header span:hover {
+    color: #ffcc00;
+    animation: spanBlink 1s infinite;
+  }
+
+  @keyframes spanBlink {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  /* Buttons */
+  .buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 30%;
+    margin-bottom: 20px;
+  }
+
+  .buttons button {
+    background-color: #bc9f28;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+    animation: buttonScale 0.3s ease-in-out;
+  }
+
+  .buttons button:hover {
+    background-color: #4b3d08;
+    animation: buttonScaleHover 0.3s ease-in-out;
+  }
+
+  @keyframes buttonScale {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes buttonScaleHover {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(0.95);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  /* Table */
+  .table {
+    width: 100%;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th,
+  td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #000000;
+  }
+
+  th {
+    background-color: #b19d4c;
+    color: #ffffff;
+  }
+ 
+  /* Modern styling with animations for Popup component */
+  /* Popup */
+  .visitors-content {
+    width: 300px;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 4px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    animation: popupFadeIn 0.3s ease-in-out;
+  }
+
+  @keyframes popupFadeIn {
+    0% {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Close button */
+  .visitors-content button {
+    position: absolute;
+    background-color: transparent;
+    color: #999999;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    transition: color 0.3s ease;
+  }
+
+  .visitors-content button:hover {
+    color: #ff0000;
+  }
+
+  /* Form inputs */
+  .visitors-content form input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #dddddd;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+  }
+
+  .visitors-content form input:focus {
+    outline: none;
+    border-color: #0066cc;
+  }
+
+  /* Error label */
+  .visitors-content .error {
+    color: #ff0000;
+    font-size: 14px;
+    margin-top: 5px;
+  }
+
+  /* Submit button */
+  .visitors-content form button[type="submit"] {
+    background-color: #bc9f28;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+    animation: buttonScale 0.3s ease-in-out;
+    position: relative;
+    bottom: 0px;
+    right: 0px;
+  }
+
+  .visitors-content form button[type="submit"]:hover {
+    background-color: #4b3d08;
+    animation: buttonScaleHover 0.3s ease-in-out;
+  }
+
+  @keyframes buttonScale {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes buttonScaleHover {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(0.95);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
