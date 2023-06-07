@@ -36,6 +36,11 @@ function Register() {
       isValid = false
       setError('DODAAC is required!')
     }
+
+    if (email.substring(email.length - 4, email.length) !== ".mil") {
+      isValid = false
+      setError("You muse use a .mil email!")
+    }
     return isValid
   }
 

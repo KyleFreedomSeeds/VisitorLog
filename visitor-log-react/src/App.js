@@ -15,6 +15,8 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { FirebaseAppProvider } from 'reactfire';
 import { firebaseConfig } from 'lib/firebase';
 import RegisterDodaac from 'RegisterDodaac';
+import VisitorPDF from '1109Generation/VisitorPDF';
+import { Document, PDFViewer } from '@react-pdf/renderer';
 
 const queryClient = new QueryClient({defaultOptions: {queries: {cacheTime: 0}}});
 
@@ -29,11 +31,13 @@ function App() {
     })
   }, [])
 
+
+
   return (
     <FirebaseAppProvider firebaseConfig={firebaseConfig}>
     <QueryClientProvider client={queryClient}>
-    <Router>
-      <AuthProvider value={{currentUser, timeActive, setTimeActive}}>
+    <AuthProvider value={{currentUser, timeActive, setTimeActive}}>
+      <Router>
         <Routes>
           <Route exact path='/' element={
             <PrivateRoute>
@@ -58,10 +62,19 @@ function App() {
             ? <ResetPass/>
             : <Navigate to='/' replace/>
           } />
-          <Route path='/verify-email' element={<VerifyEmail/>} /> 
-        </Routes>  
-      </AuthProvider>
-  </Router>
+          <Route path='/verify-email' element={<VerifyEmail/>} />
+          <Route path='/1109-pdf' element={
+            <PrivateRoute>
+              <PDFViewer width={window.innerWidth} height={window.innerHeight}>
+                <Document>
+                  <VisitorPDF/>
+                </Document>
+              </PDFViewer>
+            </PrivateRoute>
+          }/>  
+        </Routes>
+    </Router>
+  </AuthProvider>
   </QueryClientProvider>
   </FirebaseAppProvider>
   );

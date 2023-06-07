@@ -64,11 +64,11 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 30%;
+    width: 45%;
     margin-bottom: 20px;
   }
 
-  .buttons button {
+  .buttons button, .buttons PDFDownloadLink {
     background-color: #bc9f28;
     color: #ffffff;
     border: none;

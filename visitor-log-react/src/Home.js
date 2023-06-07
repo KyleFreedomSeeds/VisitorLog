@@ -1,7 +1,7 @@
 import {useAuthValue} from './AuthContext'
 import { signOut } from 'firebase/auth' 
 import { auth, db } from 'lib/firebase'
-import { collection, query, where } from "firebase/firestore"
+import { collection, orderBy, query, where } from "firebase/firestore"
 import SubmitvisitorModal from 'SubmitVisitorModal'
 import { SignVisitorOut } from 'lib/SignVisitorOut'
 import { cardScan } from 'lib/cardScanning'
@@ -10,21 +10,22 @@ import { useState, useEffect } from 'react'
 import { collectionData } from 'rxfire/firestore';
 import { combineLatest, switchMap } from 'rxjs'
 import "css/home.css"
+import { useNavigate } from 'react-router-dom'
 import moment from 'moment/moment'
 
 function Home() {
   const {currentUser} = useAuthValue()
-  console.log(currentUser.email)
+  const navigate = useNavigate()
   const [visitors, setVisitors] = useState()
   const submitVisitor = useForm()
-  const dodaacRef = query(collection(db, "users"), where("uid", "==", auth.currentUser.uid))
+  const dodaacRef = query(collection(db, "users"), where("uid", "==", currentUser.uid))
   
   useEffect(() => {
     collectionData(dodaacRef, { idField: 'id' })
     .pipe(
       switchMap(dodaacs => {
         return combineLatest(dodaacs.map(d => {
-          const ref = query(collection(db, "visitors"), where("signedOut", "==", "null"), where("dodaac", "==", d.dodaac))
+          const ref = query(collection(db, "visitors"), where("signedOut", "==", "null"), where("dodaac", "==", d.dodaac), orderBy("created"))
           return  collectionData(ref, {idField: 'id'})
         }));
       })
@@ -51,7 +52,7 @@ function Home() {
       })
     }
   }
-
+  
   return (
       <div className="body">
         <div className="header">
@@ -64,6 +65,7 @@ function Home() {
             <SubmitvisitorModal/>
           </FormProvider>
           <button onClick={() => {let badge = prompt("Enter Badge Number"); SignVisitorOut(badge)}}>Sign Visitor Out</button>
+          <button onClick={() => navigate("1109-pdf")}>View/Download 1109</button>
         </div>
         <div className="table">
           <table>
@@ -97,6 +99,7 @@ function Home() {
             </tbody>
           </table>
         </div>
+        
       </div>
   )
 }
