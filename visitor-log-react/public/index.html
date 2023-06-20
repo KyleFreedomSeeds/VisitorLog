@@ -29,7 +29,7 @@
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <script>
-      window.location.href = "/"
+      if(window.location.href.substring(window.location.href.length - 1, window.location.href.length) !== "/") {window.location.href = "/"}
     </script>
     <div id="root"></div>
     <!--
