@@ -32,13 +32,20 @@ const styles = StyleSheet.create({
 function split(array, n) {
     let [...arr]  = array;
     var res = [];
-    while (arr.length) {
-      res.push(arr.splice(0, n));
+    if (arr.length !== 0) {
+        while (arr.length) {
+        res.push(arr.splice(0, n));
+        }
+        while(res[res.length - 1].length - n !== 0) {
+        res[res.length - 1][res[res.length - 1 ].length] = {filler: ''}
+        }
+        return res;
+    } else {
+        res = Array.from(Array(1), () => {
+            return new Array(20).fill({filler: ''})
+        })
+        return res
     }
-    while(res[res.length - 1].length - n !== 0) {
-       res[res.length - 1][res[res.length - 1 ].length] = {filler: ''}
-    }
-    return res;
   }
 
 function VisitorPDF() {
@@ -72,12 +79,15 @@ function VisitorPDF() {
           })
         )
         .subscribe(dodaac => 
-           {setVisitors(split(dodaac[0], 20))}
+           {
+            setVisitors(split(dodaac[0], 20))
+        }
         )
       },[])
 
     return (
     <>
+
     {visitors !== undefined ? visitors.map(visitor => {
         return (
             <Page orientation='landscape'>
@@ -85,6 +95,7 @@ function VisitorPDF() {
                 <View key={"headerRow1"} style={[styles.row, {borderTopWidth: 1, borderTopColor: '#000',borderTopStyle: 'solid'}]}>
                     <View style={[styles.cell, { width: 43 }]}>
                         <Text style={{ fontFamily: 'Helvetica', fontSize: 8, textAlign: 'left' }}>YEAR</Text>
+                        <Text style={{ fontFamily: 'Helvetica', fontSize: 8, textAlign: 'left' }}>{moment(new Date()).format("YYYY")}</Text>
                     </View>
                     <View style={[styles.cell, { width: 425}]}>
                         <Text style={{ fontFamily: 'Helvetica-Bold', fontSize: 10 }}>VISITOR REGISTER LOG</Text>
@@ -101,6 +112,7 @@ function VisitorPDF() {
                 <View key={"headerRow2"} style={ { flexDirection: 'row',height: 15}}>
                     <View style={[styles.cell, {width: 43, borderBottom: 0}]}>
                         <Text style={{ fontFamily: 'Helvetica', fontSize: 8, textAlign: 'left'}}>MONTH</Text>
+                        <Text style={{ fontFamily: 'Helvetica', fontSize: 8, textAlign: 'left' }}>{moment(new Date()).format("MMM")}</Text>
                     </View>
                     <View style={[styles.cell, { width: 425, borderBottomWidth: 1, borderBottomColor: '#000', borderBottomStyle: 'solid'}]}>
                         <Text style={{ fontFamily: 'Helvetica', fontSize: 8}}>VISITOR IDENTIFICATION</Text>
@@ -116,10 +128,10 @@ function VisitorPDF() {
                     </View>
                 </View>
                 <View key={"headerRow3"} style={styles.row}>
-                    <View style={[styles.cell, { width: 43, flexDirection: 'column', textAlign: 'left' }]}>
+                    <View style={[styles.cell, { width: 43, flexDirection: 'column', textAlign: 'left', paddingLeft: 0 }]}>
                         <View>
-                            <Text style={{ fontFamily: 'Helvetica', fontSize: 8}}>---------------</Text>
-                            <Text style={{ fontFamily: 'Helvetica', fontSize: 8}}>DAY</Text>
+                            <Text style={{ fontFamily: 'Helvetica', fontSize: 8}}>----------------</Text>
+                            <Text style={{ fontFamily: 'Helvetica', fontSize: 8}}>  DAY</Text>
                         </View>
                     </View>
                     <View style={[styles.cell, { width: 190, paddingTop: 5 }]}>
@@ -143,10 +155,10 @@ function VisitorPDF() {
                 {visitor !== undefined ? visitor.map(( visit, index ) => {
                     return (
                         <View style={styles.row} key={index}>
-                            <View style={[styles.cell, { width: 43 }]}>
+                            <View style={[styles.cell, { width: 43, paddingTop: 10  }]}>
                                 <Text style={{ fontFamily: 'Helvetica', fontSize: 8 }}>{visit.filler !== '' ? moment(new Date(visit.created.seconds * 1000)).format("DD") : null}</Text>
                             </View>
-                            <View style={[styles.cell, { width: 190, paddingTop: 5 }]}>
+                            <View style={[styles.cell, { width: 190, paddingTop: 10 }]}>
                                 <Text style={{ fontFamily: 'Helvetica', fontSize: 8 }}>{visit.filler !== '' ? visit.name : null}</Text>
                             </View>
                             <View style={[styles.cell, { width: 45, paddingTop: 10 }]}>
@@ -155,10 +167,10 @@ function VisitorPDF() {
                             <View style={[styles.cell, { width: 190, paddingTop: 10 }]}>
                                 <Text style={{ fontFamily: 'Helvetica', fontSize: 8 }}>{visit.filler !== '' ? visit.org : null}</Text>
                             </View>
-                            <View style={[styles.cell, {width: 190}]}>
+                            <View style={[styles.cell, {width: 190, paddingTop: 10 }]}>
                                 <Text style={{ fontFamily: 'Helvetica', fontSize: 8 }}>{visit.filler !== '' ? visit.escort : null}</Text>
                             </View>
-                            <View style={[styles.cell, {width: 90}]}>
+                            <View style={[styles.cell, {width: 90, paddingTop: 10 }]}>
                                 <Text style={{ fontFamily: 'Helvetica', fontSize: 8 }}>{visit.filler !== '' ? visit.badge : null}</Text>
                             </View>
                             <View style={[styles.cell, {width: 50, paddingTop: 10}]}>
