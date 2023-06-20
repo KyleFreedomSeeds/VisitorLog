@@ -44,7 +44,7 @@ function ResetPass() {
         </form>
         <span>
           Already have an account?  
-          <Link to='/login'>login</Link>
+          <a href='/login' style={{textDecoration: "none", color: "#1976d2"}}> Login</a>
         </span>
       </div>
     </div>

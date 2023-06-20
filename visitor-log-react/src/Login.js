@@ -1,5 +1,4 @@
 import {useState} from 'react'
-import { Link } from 'react-router-dom'
 import 'css/forms.css'
 import {signInWithEmailAndPassword, sendEmailVerification} from 'firebase/auth'
 import {auth} from 'lib/firebase'
@@ -58,11 +57,11 @@ function Login(){
         </form>
         <p>
           Don't have an account? 
-          <Link to='/register'> Register</Link>
+          <a href='/register' style={{textDecoration: "none", color: "#1976d2"}}> Register</a>
         </p>
         <p>
           Forgot your password?
-          <Link to='/reset-password'> Reset password</Link>
+          <a href='/reset-password' style={{textDecoration: "none", color: "#1976d2"}}> Reset Password</a>
         </p>
       </div>
     </div>

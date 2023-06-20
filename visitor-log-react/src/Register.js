@@ -105,11 +105,11 @@ function Register() {
         </form>
         <span>
           Already have an account?  
-          <Link to='/login'>login</Link>
+          <a href='/login' style={{textDecoration: "none", color: "#1976d2"}}> Login</a>
         </span>
         <span>
           DODAAC not listed?
-          <Link to='/register-dodaac'> Register New Dodaac</Link>
+          <a href='/register-dodaac' style={{textDecoration: "none", color: "#1976d2"}}> Register New Dodaac</a>
         </span>
       </div>
     </div>
