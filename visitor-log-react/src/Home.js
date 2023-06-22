@@ -12,6 +12,9 @@ import { combineLatest, switchMap } from 'rxjs'
 import "css/home.css"
 import { useNavigate } from 'react-router-dom'
 import moment from 'moment/moment'
+import ReactDatePicker from 'react-datepicker'
+import "react-datepicker/dist/react-datepicker.css"
+import Popup from 'reactjs-popup'
 
 function Home() {
   const {currentUser} = useAuthValue()
@@ -19,6 +22,8 @@ function Home() {
   const [visitors, setVisitors] = useState()
   const submitVisitor = useForm()
   const dodaacRef = query(collection(db, "users"), where("uid", "==", currentUser.uid))
+  const [dateRange, setDateRange] = useState([null, null])
+  const [startDate, endDate] = dateRange
   
   useEffect(() => {
     collectionData(dodaacRef, { idField: 'id' })
@@ -65,7 +70,13 @@ function Home() {
             <SubmitvisitorModal/>
           </FormProvider>
           <button onClick={() => {let badge = prompt("Enter Badge Number"); SignVisitorOut(badge)}}>Sign Visitor Out</button>
-          <button onClick={() => navigate("1109-pdf")}>View/Download 1109</button>
+          <Popup trigger={<button>Generate 1109</button>}>
+            <ReactDatePicker required form="generate1109" placeholderText='Select 1109 Date Range' selectsRange={true} onChange={(update) => setDateRange(update)} startDate={startDate} endDate={endDate}/>
+            <form id="generate1109" onSubmit={() => navigate("1109-pdf", {state: {startDate: startDate, endDate: endDate}})}>
+              <button id='button1109' type='submit'>View/Download 1109</button>
+            </form>
+          </Popup>
+          {/* <button onClick={() => navigate("1109-pdf")}>View/Download 1109</button> */}
         </div>
         <div className="table">
           <table>

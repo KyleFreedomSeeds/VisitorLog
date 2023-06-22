@@ -14,7 +14,7 @@ function RegisterDodaac() {
   const ref = query(collection(db, "DODAACS"))
   const dodaacs = useFirestoreQueryData(["dodaacs"], ref)
   const dodaacMutation = useFirestoreCollectionMutation(ref)
-  const { register, reset, handleSubmit, formState} = useForm()
+  const { register, reset, handleSubmit} = useForm()
 
 
   function registerDodaac(data) {
@@ -25,6 +25,7 @@ function RegisterDodaac() {
       if (dodaac.dodaac === data.dodaac) {
         setError("DODAAC already exists!")
       }
+      return null
     })
     console.log(error === '')
     if (error === '') {

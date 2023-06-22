@@ -16,7 +16,6 @@ function SubmitvisitorModal() {
   const { register, reset, handleSubmit, formState} = useFormContext()
   const dodaacRef = query(collection(db, "users"), where("uid", "==", auth.currentUser.uid))
   const dodaac = useFirestoreCollectionData(dodaacRef)
-  var disableButton = false
   
   async function submit(data) {
     document.getElementById("submitNewVisitor").setAttribute("disabled", "disabled")
@@ -34,6 +33,7 @@ function SubmitvisitorModal() {
             dodaac: dodaac.data[0].dodaac,
           })
           reset()
+          logEvent(analytics, "visitor_sign_in")
         }
         document.getElementById("submitNewVisitor").removeAttribute("disabled")
       })

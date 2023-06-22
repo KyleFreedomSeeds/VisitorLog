@@ -58,13 +58,10 @@ function App() {
           } />
           <Route path='/verify-email' element={<VerifyEmail/>} />
           <Route path='/1109-pdf' element={
-            <PrivateRoute>
-              <PDFViewer width={window.innerWidth} height={window.innerHeight}>
-                <Document>
-                  <VisitorPDF/>
-                </Document>
-              </PDFViewer>
-            </PrivateRoute>
+             <PrivateRoute>
+                <VisitorPDF/>
+             </PrivateRoute>
+             
           }/>
           <Route exact path='*' element={
             <PrivateRoute>

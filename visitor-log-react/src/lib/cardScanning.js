@@ -2,7 +2,6 @@ import { checkDBIDS } from "./checkDBIDS"
 
 export async function cardScan(scanned) {
     let barcode = scanned.replace("'", "")
-    let scantype = "CAC"
     let ScanLib = {}
     let splitBarcode = {}
 

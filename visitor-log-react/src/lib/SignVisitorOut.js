@@ -1,5 +1,6 @@
 import { collection, doc, getDocs, query, updateDoc, where } from "firebase/firestore"
-import { db } from "./firebase"
+import { analytics, db } from "./firebase"
+import { logEvent } from "firebase/analytics"
 
 
 export async function SignVisitorOut(badge) {
@@ -11,6 +12,7 @@ export async function SignVisitorOut(badge) {
                 await updateDoc(doc(db, "visitors", querySnapshot.docs[0].id), {
                 signedOut: new Date()
             })
+            logEvent(analytics, "visitor_sign_out")
         } else {alert("This badge is not signed out")
         }
     }
