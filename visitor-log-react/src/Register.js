@@ -1,7 +1,7 @@
 import {useState} from 'react'
 import 'css/forms.css'
 import {auth, db} from 'lib/firebase'
-import {useNavigate, Link} from 'react-router-dom'
+import {useNavigate} from 'react-router-dom'
 import {createUserWithEmailAndPassword, sendEmailVerification} from 'firebase/auth'
 import {useAuthValue} from './AuthContext'
 import { handleFirebaseError } from 'lib/firebase'
@@ -102,15 +102,9 @@ function Register() {
                   )}
             </select>
           <button type='submit'>Register</button>
-        </form>
-        <span>
-          Already have an account?  
-          <a href='/login' style={{textDecoration: "none", color: "#1976d2"}}> Login</a>
-        </span>
-        <span>
-          DODAAC not listed?
-          <a href='/register-dodaac' style={{textDecoration: "none", color: "#1976d2"}}> Register New Dodaac</a>
-        </span>
+          <span><a href='/login' style={{textDecoration: "none", color: "#1976d2"}}>Login to existing Account </a></span>
+          <span><a href='/register-dodaac' style={{textDecoration: "none", color: "#1976d2"}}>Register New Dodaac</a></span>
+        </form>  
       </div>
     </div>
   )

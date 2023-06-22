@@ -1,7 +1,7 @@
 import {useState} from 'react'
 import 'css/forms.css'
 import {auth} from 'lib/firebase'
-import {useNavigate, Link} from 'react-router-dom'
+import {useNavigate} from 'react-router-dom'
 import {sendPasswordResetEmail} from 'firebase/auth'
 import {useAuthValue} from './AuthContext'
 import { handleFirebaseError } from 'lib/firebase'
@@ -42,9 +42,8 @@ function ResetPass() {
 
           <button type='submit'>Send Password Reset Email</button>
         </form>
-        <span>
-          Already have an account?  
-          <a href='/login' style={{textDecoration: "none", color: "#1976d2"}}> Login</a>
+        <span> 
+          <a href='/login' style={{textDecoration: "none", color: "#1976d2"}}>Login to existing Account </a>
         </span>
       </div>
     </div>

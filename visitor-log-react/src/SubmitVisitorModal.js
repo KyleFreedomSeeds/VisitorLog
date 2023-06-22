@@ -1,12 +1,13 @@
 import { useFirestoreCollectionMutation } from "@react-query-firebase/firestore"
 import { collection } from "firebase/firestore"
 import { validateVisitor } from "lib/validateVisitor"
-import { db, auth } from "lib/firebase"
+import { db, auth, analytics } from "lib/firebase"
 import { useFormContext } from "react-hook-form"
 import Popup from "reactjs-popup"
 import { where, query } from "firebase/firestore"
 import "reactjs-popup/dist/index.css"
 import { useFirestoreCollectionData } from "reactfire"
+import { logEvent } from "firebase/analytics"
 
 
 function SubmitvisitorModal() {
@@ -15,25 +16,28 @@ function SubmitvisitorModal() {
   const { register, reset, handleSubmit, formState} = useFormContext()
   const dodaacRef = query(collection(db, "users"), where("uid", "==", auth.currentUser.uid))
   const dodaac = useFirestoreCollectionData(dodaacRef)
+  var disableButton = false
   
   async function submit(data) {
-    validateVisitor(data).then(valid => {
-      if (valid !== null) {
-        mutation.mutate({
-          name: data.name.toUpperCase(),
-          rank: data.rank.toUpperCase(),
-          badge: parseInt(data.badge),
-          org: data.org.toUpperCase(),
-          dest: data.dest.toUpperCase(),
-          escort: data.escort.toUpperCase(),
-          created: new Date(),
-          signedOut: "null",
-          dodaac: dodaac.data[0].dodaac,
-        })
-        reset()
-      }
-    })
-  }
+    document.getElementById("submitNewVisitor").setAttribute("disabled", "disabled")
+      validateVisitor(data).then(valid => {
+        if (valid !== null) {
+          mutation.mutate({
+            name: data.name.toUpperCase(),
+            rank: data.rank.toUpperCase(),
+            badge: parseInt(data.badge),
+            org: data.org.toUpperCase(),
+            dest: data.dest.toUpperCase(),
+            escort: data.escort.toUpperCase(),
+            created: new Date(),
+            signedOut: "null",
+            dodaac: dodaac.data[0].dodaac,
+          })
+          reset()
+        }
+        document.getElementById("submitNewVisitor").removeAttribute("disabled")
+      })
+    }
 
   return (
     <>
@@ -59,7 +63,7 @@ function SubmitvisitorModal() {
             <input type="text" name="formEscort" id="formEscort" required placeholder="Escort"{...register("escort", {pattern: {value: /^[A-Za-z]+$/i, message: "Escort must not contain numbers!"}})}/>
             {formState.escort && <label className="error" htmlFor="formEscort">{formState.escort.message}</label>}
 
-            <button type="submit">Submit</button>
+            <button type="submit" id="submitNewVisitor">Submit</button>
           </form>
         </div>
       )}

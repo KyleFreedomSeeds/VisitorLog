@@ -45,24 +45,19 @@ function Login(){
             required
             placeholder="Enter your email"
             onChange={e => setEmail(e.target.value)}/>
-
+          
           <input 
             type='password'
             value={password}
             required
             placeholder='Enter your password'
             onChange={e => setPassword(e.target.value)}/>
-
-          <button type='submit'>Login</button>
+          <a href='/reset-password' style={{textDecoration: "none", color: "#1976d2"}}>Forgot your password?</a>
+          <div className='authFooter'>
+            <a href='/register' style={{textDecoration: "none", color: "#1976d2"}}>Register</a>
+            <button type='submit'>Login</button>
+          </div>
         </form>
-        <p>
-          Don't have an account? 
-          <a href='/register' style={{textDecoration: "none", color: "#1976d2"}}> Register</a>
-        </p>
-        <p>
-          Forgot your password?
-          <a href='/reset-password' style={{textDecoration: "none", color: "#1976d2"}}> Reset Password</a>
-        </p>
       </div>
     </div>
   )

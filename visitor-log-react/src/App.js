@@ -1,4 +1,3 @@
-import './App.css';
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom'
 import Home from './Home'
 import Register from './Register'
@@ -39,11 +38,6 @@ function App() {
     <AuthProvider value={{currentUser, timeActive, setTimeActive}}>
       <Router>
         <Routes>
-          <Route exact path='/' element={
-            <PrivateRoute>
-              <Home />
-            </PrivateRoute>
-          }/>
           <Route path="/login" element={
             !currentUser?.emailVerified 
             ? <Login/>
@@ -70,6 +64,11 @@ function App() {
                   <VisitorPDF/>
                 </Document>
               </PDFViewer>
+            </PrivateRoute>
+          }/>
+          <Route exact path='*' element={
+            <PrivateRoute>
+              <Home />
             </PrivateRoute>
           }/>  
         </Routes>
