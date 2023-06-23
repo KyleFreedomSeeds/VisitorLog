@@ -46,7 +46,7 @@ function SubmitvisitorModal() {
       close => (
         <div>
           <h3>New Visitor</h3>
-          <button style={{position:"absolute", top:"10px", right:"10px"}} onClick={() => close()}>X</button>
+          <button style={{position:"absolute", top:"10px", right:"10px"}} onClick={() =>  {reset(); close()}}>X</button>
           <form onSubmit={handleSubmit(submit)}>
             <input type="text" name="formName" id="formName" required placeholder="Full Name" {...register("name", {pattern: {value: /^[^0-9]+$/i, message: "Name must not contain numbers!"}})}/>
             {formState.errors.name && <label className="error" htmlFor="formName">{formState.errors.name.message}</label>}
