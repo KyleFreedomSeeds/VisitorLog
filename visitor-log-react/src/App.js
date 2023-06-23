@@ -10,7 +10,7 @@ import { FirebaseAppProvider } from 'reactfire';
 import { firebaseConfig } from 'lib/firebase';
 import { Suspense } from 'react';
 import "css/loadingWheel.css"
-import VisitorPDF from '1109Generation/VisitorPDF';
+//import VisitorPDF from '1109Generation/VisitorPDF';
 
 const Home = lazy(() => import('./Home'));
 const Register = lazy(() => import('./Register'));
@@ -18,7 +18,7 @@ const VerifyEmail = lazy(() => import('./VerifyEmail'));
 const ResetPass = lazy(() => import('./ResetPass'));
 const Login = lazy(() => import('./Login'));
 const RegisterDodaac = lazy(() => import('./RegisterDodaac'));
-
+const VisitorPDF = lazy(() => import('1109Generation/VisitorPDF'));
 const queryClient = new QueryClient({defaultOptions: {queries: {cacheTime: 0}}});
 
 function App() {

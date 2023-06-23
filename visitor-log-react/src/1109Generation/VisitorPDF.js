@@ -56,7 +56,6 @@ function VisitorPDF() {
     const {state} = useLocation()
     const {startDate, endDate} = state
 
-    console.log(startDate + endDate)
     useEffect(() => {
         collectionData(dodaacRef, { idField: 'id' })
         .pipe(

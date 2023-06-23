@@ -72,7 +72,7 @@ function Home() {
           <button onClick={() => {let badge = prompt("Enter Badge Number"); SignVisitorOut(badge)}}>Sign Visitor Out</button>
           <Popup trigger={<button>Generate 1109</button>}>
             <ReactDatePicker required form="generate1109" placeholderText='Select 1109 Date Range' selectsRange={true} onChange={(update) => setDateRange(update)} startDate={startDate} endDate={endDate}/>
-            <form id="generate1109" onSubmit={() => navigate("1109-pdf", {state: {startDate: startDate, endDate: endDate}})}>
+            <form id="generate1109" onSubmit={(e) => {e.preventDefault(); navigate("1109-pdf", {state: {startDate: startDate, endDate: endDate}})}}>
               <button id='button1109' type='submit'>View/Download 1109</button>
             </form>
           </Popup>
