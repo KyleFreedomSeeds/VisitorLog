@@ -92,7 +92,6 @@ function Home() {
               </tr>
             </thead>
             <tbody>
-            {visitors === undefined && <tr><td>Loading...</td></tr>}
             {visitors !== undefined && visitors.map(visitor => {
               const date = moment(new Date(visitor.created.seconds * 1000)).format("DD MMM YY h:mm a")
               return(
@@ -109,6 +108,7 @@ function Home() {
             })}
             </tbody>
           </table>
+          {visitors === undefined && <div className="loading-wheel"></div>}
         </div>
         
       </div>
