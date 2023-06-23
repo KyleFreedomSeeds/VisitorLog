@@ -2,6 +2,7 @@
 import firebase from 'firebase/compat/app';
 import { getFirestore } from 'firebase/firestore';
 import { getAnalytics } from 'firebase/analytics';
+import { getPerformance } from "firebase/performance";
 import 'firebase/compat/auth';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -25,6 +26,7 @@ export const auth = firebase.auth()
 // Initialize Firebase
 
 export const analytics = getAnalytics(app);
+export const performance = getPerformance(app)
 
 export function handleFirebaseError(err) {
   switch (err){
