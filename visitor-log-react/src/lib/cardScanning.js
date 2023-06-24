@@ -7,11 +7,14 @@ export async function cardScan(scanned) {
 
     switch (barcode.charAt(0)) {
         case "@": 
+            console.log(barcode.search("ANSI") !== -1)
             if (barcode.search("ANSI") !== -1) {
                 ScanLib["Rank"] = "CIV"
                 splitBarcode = barcode.split("\r\n")
 
                 splitBarcode.forEach(e => {
+                    console.log(e.substring(0,3))
+                    console.log(e.substring(3, e.length))
                     switch (e.substring(0,3)) {
                         case "DAC": if (ScanLib["FN"] === undefined) {ScanLib["FN"] = e.substring(3, e.length)}; break;
                         case "DAD": if (ScanLib["MI"] === undefined) {ScanLib["MI"] = e.substring(3, e.length)}; break;
@@ -33,7 +36,6 @@ export async function cardScan(scanned) {
             }
             break;
         case "M":
-            console.log("test M")
             if (barcode.length === 99) {
                 //ScanLib.Add "EDIPI", ConvDec(Trim(barcode.substring(2, 7)), 32)
                 ScanLib["FN"] = barcode.substring(16, 20 + 16).trim()

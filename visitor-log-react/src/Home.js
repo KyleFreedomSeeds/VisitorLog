@@ -45,7 +45,6 @@ function Home() {
       cardScan(barcode).then(visitorInfo => {
         if (visitorInfo !== null) {
           document.getElementById("manualSubmit").click()
-          console.log(visitorInfo)
           if ("FMN" in visitorInfo) {
             submitVisitor.setValue("name", visitorInfo["FMN"])
           } else {
@@ -76,7 +75,6 @@ function Home() {
               <button id='button1109' type='submit'>View/Download 1109</button>
             </form>
           </Popup>
-          {/* <button onClick={() => navigate("1109-pdf")}>View/Download 1109</button> */}
         </div>
         <div className="table">
           <table>
