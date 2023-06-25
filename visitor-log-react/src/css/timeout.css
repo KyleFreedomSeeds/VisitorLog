@@ -1,0 +1,28 @@
+.timeout-content {
+    width: 500px;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 4px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    animation: popupFadeIn 0.3s ease-in-out;
+  }
+
+  .timeout-content button {
+    background-color: #bc9f28;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+    animation: buttonScale 0.3s ease-in-out;
+    position: relative;
+    bottom: 0px;
+    right: 0px;
+  }
+
+  .timeout-content button:hover {
+    background-color: #4b3d08;
+    animation: buttonScaleHover 0.3s ease-in-out;
+  }

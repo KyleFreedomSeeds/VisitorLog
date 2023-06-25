@@ -1,7 +1,8 @@
 
+import { useContext } from "react";
 import {createContext} from "react";
 
-export const VisitorContext = createContext();
+const VisitorContext = createContext();
 
 export function VisitorProvider({children, value}){
   
@@ -11,4 +12,8 @@ export function VisitorProvider({children, value}){
       {children}
     </VisitorContext.Provider>
   );
+}
+
+export function useVisitors(){
+  return useContext(VisitorContext)
 }

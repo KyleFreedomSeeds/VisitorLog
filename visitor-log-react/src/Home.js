@@ -1,44 +1,27 @@
 import {useAuthValue} from './AuthContext'
 import { signOut } from 'firebase/auth' 
-import { auth, db } from 'lib/firebase'
-import { collection, orderBy, query, where } from "firebase/firestore"
+import { auth } from 'lib/firebase'
 import SubmitvisitorModal from 'SubmitVisitorModal'
 import { SignVisitorOut } from 'lib/SignVisitorOut'
 import { cardScan } from 'lib/cardScanning'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useState, useEffect } from 'react'
-import { collectionData } from 'rxfire/firestore';
-import { combineLatest, switchMap } from 'rxjs'
+import { useState} from 'react'
 import "css/home.css"
 import { useNavigate } from 'react-router-dom'
 import moment from 'moment/moment'
 import ReactDatePicker from 'react-datepicker'
 import "react-datepicker/dist/react-datepicker.css"
 import Popup from 'reactjs-popup'
+import { useVisitors } from 'VisitorContext'
+import { Timeout } from 'Timeout'
 
 function Home() {
-  const {currentUser} = useAuthValue()
+  const {currentUser, setTimeActive} = useAuthValue()
   const navigate = useNavigate()
-  const [visitors, setVisitors] = useState()
+  const visitors = useVisitors()
   const submitVisitor = useForm()
-  const dodaacRef = query(collection(db, "users"), where("uid", "==", currentUser.uid))
   const [dateRange, setDateRange] = useState([null, null])
   const [startDate, endDate] = dateRange
-  
-  useEffect(() => {
-    collectionData(dodaacRef, { idField: 'id' })
-    .pipe(
-      switchMap(dodaacs => {
-        return combineLatest(dodaacs.map(d => {
-          const ref = query(collection(db, "visitors"), where("signedOut", "==", "null"), where("dodaac", "==", d.dodaac), orderBy("created"))
-          return  collectionData(ref, {idField: 'id'})
-        }));
-      })
-    )
-    .subscribe(dodaac => 
-      setVisitors(dodaac[0])
-    );
-  },[])
 
   const scanId = barcode => {
     if (barcode !== null) {
@@ -56,7 +39,7 @@ function Home() {
       })
     }
   }
-  
+
   return (
       <div className="body">
         <div className="header">
@@ -64,17 +47,18 @@ function Home() {
           <p>Logged in as: {currentUser.email}<span onClick={() => signOut(auth)}>Sign Out</span></p>
         </div>
         <div className="buttons">
-          <button onClick={() => {let barcode = prompt("Scan ID"); scanId(barcode)}}>Scan ID</button>
+          <button onClick={() => {let barcode = prompt("Scan ID"); scanId(barcode); setTimeActive(new Date())}}>Scan ID</button>
           <FormProvider {...submitVisitor}>
             <SubmitvisitorModal/>
           </FormProvider>
-          <button onClick={() => {let badge = prompt("Enter Badge Number"); SignVisitorOut(badge)}}>Sign Visitor Out</button>
+          <button onClick={() => {let badge = prompt("Enter Badge Number"); SignVisitorOut(badge); setTimeActive(new Date())}}>Sign Visitor Out</button>
           <Popup trigger={<button>Generate 1109</button>}>
             <ReactDatePicker required form="generate1109" placeholderText='Select 1109 Date Range' selectsRange={true} onChange={(update) => setDateRange(update)} startDate={startDate} endDate={endDate}/>
             <form id="generate1109" onSubmit={(e) => {e.preventDefault(); navigate("1109-pdf", {state: {startDate: startDate, endDate: endDate}})}}>
               <button id='button1109' type='submit'>View/Download 1109</button>
             </form>
           </Popup>
+          <Timeout/>
         </div>
         <div className="table">
           <table>
