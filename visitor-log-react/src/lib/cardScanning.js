@@ -1,4 +1,6 @@
+import { logEvent } from "firebase/analytics"
 import { checkDBIDS } from "./checkDBIDS"
+import { analytics } from "./firebase"
 
 export async function cardScan(scanned) {
     let barcode = scanned.replace("'", "")
@@ -6,15 +8,14 @@ export async function cardScan(scanned) {
     let splitBarcode = {}
 
     switch (barcode.charAt(0)) {
-        case "@": 
+        case "@":
             console.log(barcode.search("ANSI") !== -1)
             if (barcode.search("ANSI") !== -1) {
                 ScanLib["Rank"] = "CIV"
-                splitBarcode = barcode.split("\r\n")
+                splitBarcode = barcode.split(" ")
+                if (splitBarcode.length < 15) {splitBarcode = barcode.split("\r\n")}
 
                 splitBarcode.forEach(e => {
-                    console.log(e.substring(0,3))
-                    console.log(e.substring(3, e.length))
                     switch (e.substring(0,3)) {
                         case "DAC": if (ScanLib["FN"] === undefined) {ScanLib["FN"] = e.substring(3, e.length)}; break;
                         case "DAD": if (ScanLib["MI"] === undefined) {ScanLib["MI"] = e.substring(3, e.length)}; break;
