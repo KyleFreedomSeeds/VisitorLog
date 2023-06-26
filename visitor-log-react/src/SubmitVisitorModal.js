@@ -42,44 +42,29 @@ function SubmitvisitorModal() {
       })
     }
 
-    function searchInObject(obj, searchValue){
-      var _s = JSON.stringify(obj);
-      if(_s.indexOf(searchValue)>-1){
-         if(Array.isArray(obj)){
-           return obj.some(function(o){
-             if(searchInObject(o, searchValue)) {return true} else{ return false};
-           });
-         }
-        else if(typeof(obj) === 'object'){
-          for(var k in obj){
-            if(searchInObject(obj[k], searchValue)) return true;
-          }
-        }
-        else{
-          if(obj === searchValue) return true;
-        }
-      }
+    function searchInObject(obj, searchValue) {
+      var found = false
+      obj.forEach(element => {
+        if(element["name"] === searchValue && element["signedOut"] === "null") {found = true}
+        if(element["badge"] === searchValue && element["signedOut"] === "null") {found =  true}
+      });
+
+      return found
     }
 
     async function validateVisitor(data) {
       const name = data.name.toUpperCase()
       const badge = parseInt(data.badge)
       
-      var nameCheck = visitors.findIndex(x=>{
-        return searchInObject(x, name);
-      })
+      var nameCheck = searchInObject(visitors, name);
+      var badgeCheck = searchInObject(visitors, badge);
 
-      var badgeCheck = visitors.findIndex(x=>{
-        return searchInObject(x, badge);
-      })
-
-  
-      if(nameCheck !== -1) {
+      if(nameCheck) {
           alert("There is already a user signed in with this name!")
           return null
       } 
 
-      if(badgeCheck !== -1) {
+      if(badgeCheck) {
           alert("This badge is already signed in!")
           return null
       } 

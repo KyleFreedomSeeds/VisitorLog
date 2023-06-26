@@ -15,15 +15,15 @@ export const Timeout = () => {
     const closeModal = () => {setTimeActive(new Date())};
 
     useInterval(() => {
-    setTimeoutCheck(timeoutCheck => timeoutCheck + 1)
-    if(curTime >= timeout) {
-        signOut(auth)
-    }
+        setTimeoutCheck(timeoutCheck => timeoutCheck + 1)
     }, 300000);
 
     useInterval(
     () => {
         setRemainingTime(moment.utc(timeout-curTime).format('mm:ss'));
+        if(curTime >= timeout) {
+            signOut(auth)
+        }
     },
     curTime >= timeoutWarn  ? 1000 : null
     );

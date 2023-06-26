@@ -1,6 +1,4 @@
-import { logEvent } from "firebase/analytics"
 import { checkDBIDS } from "./checkDBIDS"
-import { analytics } from "./firebase"
 
 export async function cardScan(scanned) {
     let barcode = scanned.replace("'", "")
