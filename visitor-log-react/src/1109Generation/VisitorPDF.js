@@ -56,6 +56,7 @@ function VisitorPDF() {
     const {state} = useLocation()
     const {startDate, endDate} = state
 
+    //change away from subscription
     useEffect(() => {
         collectionData(dodaacRef, { idField: 'id' })
         .pipe(
@@ -71,6 +72,7 @@ function VisitorPDF() {
         );
       },[])
 
+      //change away from subscription
       useEffect(() => {
         collectionData(dodaacRef, { idField: 'id' })
         .pipe(

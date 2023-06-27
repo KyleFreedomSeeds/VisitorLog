@@ -32,6 +32,7 @@ function App() {
   const [timeActive, setTimeActive] = useState(new Date())
   var timeout = moment(timeActive).add(1, 'hour').toDate()
   var timeoutWarn = moment(timeActive).add(55, 'minutes').toDate()
+  const filter = moment(new Date()).subtract(2, "days").toDate()
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -47,7 +48,7 @@ function App() {
       .pipe(
         switchMap(dodaacs => {
           return combineLatest(dodaacs.map(d => {
-            const ref = query(collection(db, "visitors"), where("signedOut", "==", "null"), where("dodaac", "==", d.dodaac), orderBy("created"))
+            const ref = query(collection(db, "visitors"), where("signedOut", "==", "null"), where("created", ">=", filter), where("dodaac", "==", d.dodaac), orderBy("created"))
             return  collectionData(ref, {idField: 'id'})
           }));
         })

@@ -24,7 +24,7 @@ function Home() {
   const [startDate, endDate] = dateRange
 
   const scanId = barcode => {
-    if (barcode !== null) {
+    if (barcode !== null && barcode !== "") {
       cardScan(barcode).then(visitorInfo => {
         if (visitorInfo !== null) {
           document.getElementById("manualSubmit").click()
