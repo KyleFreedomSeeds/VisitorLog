@@ -18,7 +18,7 @@ import { Timeout } from 'Timeout'
 function Home() {
   const {currentUser, setTimeActive} = useAuthValue()
   const navigate = useNavigate()
-  const visitors = useVisitors()
+  const {visitors} = useVisitors()
   const submitVisitor = useForm()
   const [dateRange, setDateRange] = useState([null, null])
   const [startDate, endDate] = dateRange

@@ -12,7 +12,7 @@ function RegisterDodaac() {
   const [error, setError] = useState('')
   const navigate = useNavigate()
   const ref = query(collection(db, "DODAACS"))
-  const dodaacs = useFirestoreQueryData(["dodaacs"], ref)
+  const dodaacs = useFirestoreQueryData(["dodaacs"], ref,{subscribe: false})
   const dodaacMutation = useFirestoreCollectionMutation(ref)
   const { register, reset, handleSubmit} = useForm()
 

@@ -1,13 +1,12 @@
 import React from 'react';
 import {Text, View, StyleSheet, Page, PDFViewer, Document } from '@react-pdf/renderer';
 import { collection, orderBy, query, where } from 'firebase/firestore';
-import { db, auth } from "lib/firebase"
+import { db } from "lib/firebase"
 import { useState } from 'react';
-import { useEffect } from 'react';
-import { collectionData } from 'rxfire/firestore';
-import { combineLatest, switchMap } from 'rxjs';
 import moment from 'moment';
 import { useLocation } from 'react-router-dom';
+import { useVisitors } from 'VisitorContext';
+import { useFirestoreQueryData } from '@react-query-firebase/firestore';
 
 const styles = StyleSheet.create({
   row: {
@@ -50,46 +49,16 @@ function split(array, n) {
   }
 
 function VisitorPDF() {
-    const [dodaac, setDodaac] = useState()
+    const {base} = useVisitors()
     const [visitors, setVisitors] = useState()
-    const dodaacRef = query(collection(db, "users"), where("uid", "==", auth.currentUser.uid))
     const {state} = useLocation()
     const {startDate, endDate} = state
 
-    //change away from subscription
-    useEffect(() => {
-        collectionData(dodaacRef, { idField: 'id' })
-        .pipe(
-          switchMap(dodaacs => {
-            return combineLatest(dodaacs.map(d => {
-              const ref = query(collection(db, "DODAACS"), where("dodaac", "==", d.dodaac))
-              return  collectionData(ref, {idField: 'id'})
-            }));
-          })
-        )
-        .subscribe(dodaac => 
-          setDodaac(dodaac[0])
-        );
-      },[])
-
-      //change away from subscription
-      useEffect(() => {
-        collectionData(dodaacRef, { idField: 'id' })
-        .pipe(
-          switchMap(dodaacs => {
-            return combineLatest(dodaacs.map(d => {
-              const ref = query(collection(db, "visitors"), where("signedOut", "!=", "null"), where("dodaac", "==", d.dodaac), where("signedOut", ">=", startDate), where("signedOut", "<=", endDate), orderBy("signedOut"))
-              return  collectionData(ref, {idField: 'id'})
-            }));
-          })
-        )
-        .subscribe(dodaac => 
-           {
-            setVisitors(split(dodaac[0], 20))
-        }
-        )
-      },[])
-
+    const ref = query(collection(db, "visitors"), where("signedOut", "!=", "null"), where("dodaac", "==", base.dodaac), where("signedOut", ">=", startDate), where("signedOut", "<=", endDate), orderBy("signedOut"))
+    const data = useFirestoreQueryData(["1109"],ref,{subscribe: false})
+    console.log(data.status)
+    console.log(visitors)
+    if (data.status === "success" && visitors === undefined) {setVisitors(split(data.data,20))}
     return (
     <>
     {visitors !== undefined ? visitors.map(visitor => {
@@ -108,11 +77,11 @@ function VisitorPDF() {
                         </View>
                         <View style={[styles.cell, { width: 190 }]}>
                             <Text style={{ fontFamily: 'Helvetica', fontSize: 8, textAlign: 'left'}}>ORGANIZATION</Text>
-                            <Text style={{ fontFamily: 'Helvetica', fontSize: 8, textAlign: 'left'}}>{dodaac !== undefined ? dodaac[0].squadron : null}</Text>
+                            <Text style={{ fontFamily: 'Helvetica', fontSize: 8, textAlign: 'left'}}>{base.squadron}</Text>
                         </View>
                         <View style={[styles.cell, { width: 190 }]}>
                             <Text style={{ fontFamily: 'Helvetica', fontSize: 8, textAlign: 'left'}}>LOCATION</Text>
-                            <Text style={{ fontFamily: 'Helvetica', fontSize: 8, textAlign: 'left'}}>{dodaac !== undefined ? dodaac[0].base : null}</Text>
+                            <Text style={{ fontFamily: 'Helvetica', fontSize: 8, textAlign: 'left'}}>{base.base}</Text>
                         </View>
                     </View>
                     <View key={"headerRow2"} style={ { flexDirection: 'row',height: 15}}>

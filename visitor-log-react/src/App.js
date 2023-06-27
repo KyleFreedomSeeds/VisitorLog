@@ -11,8 +11,7 @@ import { firebaseConfig } from 'lib/firebase';
 import { Suspense } from 'react';
 import "css/loadingWheel.css"
 import { collectionData } from 'rxfire/firestore'
-import { combineLatest, switchMap } from 'rxjs'
-import { collection, orderBy, query, where } from 'firebase/firestore'
+import { collection, getDocs, orderBy, query, where } from 'firebase/firestore'
 import { VisitorProvider } from 'VisitorContext'
 import moment from 'moment'
 
@@ -30,6 +29,8 @@ function App() {
   const [currentUser, setCurrentUser] = useState(null)
   const [visitors, setVisitors] = useState([])
   const [timeActive, setTimeActive] = useState(new Date())
+  const [dodaac, setDodaac] = useState(undefined)
+  const [base, setBase] = useState([])
   var timeout = moment(timeActive).add(1, 'hour').toDate()
   var timeoutWarn = moment(timeActive).add(55, 'minutes').toDate()
   const filter = moment(new Date()).subtract(2, "days").toDate()
@@ -42,28 +43,25 @@ function App() {
   }, [])
 
   useEffect(() => {
-    if (currentUser?.emailVerified) {
+    if (currentUser?.emailVerified && dodaac === undefined){
       const dodaacRef = query(collection(db, "users"), where("uid", "==", currentUser?.uid))
-      collectionData(dodaacRef, { idField: 'id' })
-      .pipe(
-        switchMap(dodaacs => {
-          return combineLatest(dodaacs.map(d => {
-            const ref = query(collection(db, "visitors"), where("signedOut", "==", "null"), where("created", ">=", filter), where("dodaac", "==", d.dodaac), orderBy("created"))
-            return  collectionData(ref, {idField: 'id'})
-          }));
-        })
-      )
-      .subscribe(dodaac => 
-        setVisitors(dodaac[0])
-      );
+      getDocs(dodaacRef).then((dodaacQuery) => dodaacQuery.docs.map(doc => setDodaac(doc.data())))      
     }
-  },[currentUser])
+
+    if (dodaac !== undefined) {
+      const baseRef = query(collection(db, "DODAACS"), where("dodaac", "==", dodaac.dodaac))
+      collectionData(baseRef, {idField: 'id'}).subscribe(base => setBase(base[0]))
+
+      const ref = query(collection(db, "visitors"), where("signedOut", "==", "null"), where("created", ">=", filter), where("dodaac", "==", dodaac.dodaac), orderBy("created"))
+      collectionData(ref, {idField: 'id'}).subscribe(visitors => setVisitors(visitors))
+    }
+  },[currentUser, dodaac])
 
   return (
     <FirebaseAppProvider firebaseConfig={firebaseConfig}>
     <QueryClientProvider client={queryClient}>
     <AuthProvider value={{currentUser, timeActive, setTimeActive, timeout, timeoutWarn}}>
-    <VisitorProvider value={visitors}>
+    <VisitorProvider value={{visitors, base}}>
       <Router>
       <Suspense fallback={<div className="loading-wheel"></div>}>
         <Routes>
