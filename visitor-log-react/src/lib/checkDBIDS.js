@@ -4,6 +4,7 @@ import submitNewglobal from "./SubmitNewGlobal"
 
 export async function checkDBIDS(barcode) {
     let ScanLib = {}
+    console.log("#READ DATABASE")
     const col = collection(db, "DBIDS")
     const ref = query(col, where("barcode", "==", barcode))
     const querySnapshot = await getDocs(ref)

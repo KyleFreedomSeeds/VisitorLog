@@ -21,6 +21,7 @@ function SubmitvisitorModal() {
     document.getElementById("submitNewVisitor").setAttribute("disabled", "disabled")
       validateVisitor(data).then(valid => {
         if (valid !== null) {
+          console.log("#WROTE DATABASE")
           mutation.mutate({
             name: data.name.toUpperCase(),
             rank: data.rank.toUpperCase(),

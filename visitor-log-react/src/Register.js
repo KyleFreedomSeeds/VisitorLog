@@ -18,6 +18,7 @@ function Register() {
   const [error, setError] = useState('')
   const navigate = useNavigate()
   const {setTimeActive} = useAuthValue()
+  console.log("#READ DATABASE")
   const ref = query(collection(db, "DODAACS"))
   const dodaacs = useFirestoreQuery(["dodaacs"], ref)
   const userRef = query(collection(db, "users"))
@@ -51,6 +52,7 @@ function Register() {
       // Create a new user with email and password using firebase
         createUserWithEmailAndPassword(auth, email, password)
         .then(() => {
+          console.log("#WROTE DATABASE")
           userMutation.mutate({
             dodaac: dodaac,
             uid: auth.currentUser.uid}

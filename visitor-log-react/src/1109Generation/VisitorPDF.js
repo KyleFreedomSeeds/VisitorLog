@@ -53,11 +53,9 @@ function VisitorPDF() {
     const [visitors, setVisitors] = useState()
     const {state} = useLocation()
     const {startDate, endDate} = state
-
+    console.log("#READ DATABASE")
     const ref = query(collection(db, "visitors"), where("signedOut", "!=", "null"), where("dodaac", "==", base.dodaac), where("signedOut", ">=", startDate), where("signedOut", "<=", endDate), orderBy("signedOut"))
     const data = useFirestoreQueryData(["1109"],ref,{subscribe: false})
-    console.log(data.status)
-    console.log(visitors)
     if (data.status === "success" && visitors === undefined) {setVisitors(split(data.data,20))}
     return (
     <>

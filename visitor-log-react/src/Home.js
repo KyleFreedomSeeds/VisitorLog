@@ -18,7 +18,7 @@ import { Timeout } from 'Timeout'
 function Home() {
   const {currentUser, setTimeActive} = useAuthValue()
   const navigate = useNavigate()
-  const {visitors} = useVisitors()
+  const {visitors, visitorsQuery} = useVisitors()
   const submitVisitor = useForm()
   const [dateRange, setDateRange] = useState([null, null])
   const [startDate, endDate] = dateRange
@@ -44,7 +44,7 @@ function Home() {
       <div className="body">
         <div className="header">
           <h1>Visitor Log</h1>
-          <p>Logged in as: {currentUser.email}<span onClick={() => signOut(auth)}>Sign Out</span></p>
+          <p>Logged in as: {currentUser.email}<span onClick={() => {visitorsQuery.current.unsubscribe(); signOut(auth)}}>Sign Out</span></p>
         </div>
         <div className="buttons">
           <button onClick={() => {let barcode = prompt("Scan ID"); scanId(barcode); setTimeActive(new Date())}}>Scan ID</button>

@@ -11,6 +11,7 @@ function RegisterDodaac() {
 
   const [error, setError] = useState('')
   const navigate = useNavigate()
+  console.log("#READ DATABASE")
   const ref = query(collection(db, "DODAACS"))
   const dodaacs = useFirestoreQueryData(["dodaacs"], ref,{subscribe: false})
   const dodaacMutation = useFirestoreCollectionMutation(ref)
@@ -29,6 +30,7 @@ function RegisterDodaac() {
     })
     console.log(error === '')
     if (error === '') {
+      console.log("#WROTE DATABASE")
       dodaacMutation.mutate({
         base: data.base.toUpperCase(),
         dodaac: data.dodaac.toUpperCase(),

@@ -14,6 +14,7 @@ import { collectionData } from 'rxfire/firestore'
 import { collection, getDocs, orderBy, query, where } from 'firebase/firestore'
 import { VisitorProvider } from 'VisitorContext'
 import moment from 'moment'
+import { useRef } from 'react'
 
 const Home = lazy(() => import('./Home'));
 const Register = lazy(() => import('./Register'));
@@ -34,6 +35,7 @@ function App() {
   var timeout = moment(timeActive).add(1, 'hour').toDate()
   var timeoutWarn = moment(timeActive).add(55, 'minutes').toDate()
   const filter = moment(new Date()).subtract(2, "days").toDate()
+  const visitorsQuery = useRef(0)
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -44,16 +46,19 @@ function App() {
 
   useEffect(() => {
     if (currentUser?.emailVerified && dodaac === undefined){
+      console.log("#READ DATABASE")
       const dodaacRef = query(collection(db, "users"), where("uid", "==", currentUser?.uid))
       getDocs(dodaacRef).then((dodaacQuery) => dodaacQuery.docs.map(doc => setDodaac(doc.data())))      
     }
 
-    if (dodaac !== undefined) {
+    if (currentUser?.emailVerified && dodaac !== undefined) {
+      console.log("#READ DATABASE")
       const baseRef = query(collection(db, "DODAACS"), where("dodaac", "==", dodaac.dodaac))
-      collectionData(baseRef, {idField: 'id'}).subscribe(base => setBase(base[0]))
+      getDocs(baseRef).then(base => base.docs.map(doc => setBase(doc.data())))
 
+      console.log("#READ DATABASE")
       const ref = query(collection(db, "visitors"), where("signedOut", "==", "null"), where("created", ">=", filter), where("dodaac", "==", dodaac.dodaac), orderBy("created"))
-      collectionData(ref, {idField: 'id'}).subscribe(visitors => setVisitors(visitors))
+      visitorsQuery.current  = collectionData(ref, {idField: 'id'}).subscribe(visitors => setVisitors(visitors))
     }
   },[currentUser, dodaac])
 
@@ -61,7 +66,7 @@ function App() {
     <FirebaseAppProvider firebaseConfig={firebaseConfig}>
     <QueryClientProvider client={queryClient}>
     <AuthProvider value={{currentUser, timeActive, setTimeActive, timeout, timeoutWarn}}>
-    <VisitorProvider value={{visitors, base}}>
+    <VisitorProvider value={{visitors, base, visitorsQuery}}>
       <Router>
       <Suspense fallback={<div className="loading-wheel"></div>}>
         <Routes>

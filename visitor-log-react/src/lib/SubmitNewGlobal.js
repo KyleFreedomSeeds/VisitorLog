@@ -9,6 +9,7 @@ async function submitNewglobal(barcode) {
   while (data.name === "") {data.name = prompt("Enter full name of personnel")}
 
   if (data.name !== null) {
+    console.log("#WROTE DATABASE")
     const docRef = await addDoc(ref, {
       barcode: barcode,
       full_name: data.name.toUpperCase()
