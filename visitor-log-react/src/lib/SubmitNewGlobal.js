@@ -14,7 +14,8 @@ async function submitNewglobal(barcode) {
       barcode: barcode,
       full_name: data.name.toUpperCase()
     });
-  
+    
+    console.log("#READ DATABASE")
     const doc = await getDoc(docRef)
     return doc
   } else {return null}

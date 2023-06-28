@@ -23,9 +23,10 @@ function Home() {
   const [dateRange, setDateRange] = useState([null, null])
   const [startDate, endDate] = dateRange
 
+
   const scanId = barcode => {
     if (barcode !== null && barcode !== "") {
-      cardScan(barcode).then(visitorInfo => {
+      cardScan(barcode, visitors).then(visitorInfo => {
         if (visitorInfo !== null) {
           document.getElementById("manualSubmit").click()
           if ("FMN" in visitorInfo) {
@@ -51,7 +52,7 @@ function Home() {
           <FormProvider {...submitVisitor}>
             <SubmitvisitorModal/>
           </FormProvider>
-          <button onClick={() => {let badge = prompt("Enter Badge Number"); SignVisitorOut(badge); setTimeActive(new Date())}}>Sign Visitor Out</button>
+          <button onClick={() => {let badge = prompt("Enter Badge Number"); SignVisitorOut(badge, visitors); setTimeActive(new Date())}}>Sign Visitor Out</button>
           <Popup trigger={<button>Generate 1109</button>}>
             <ReactDatePicker required form="generate1109" placeholderText='Select 1109 Date Range' selectsRange={true} onChange={(update) => setDateRange(update)} startDate={startDate} endDate={endDate}/>
             <form id="generate1109" onSubmit={(e) => {e.preventDefault(); navigate("1109-pdf", {state: {startDate: startDate, endDate: endDate}})}}>

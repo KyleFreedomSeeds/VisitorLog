@@ -20,7 +20,7 @@ function Register() {
   const {setTimeActive} = useAuthValue()
   console.log("#READ DATABASE")
   const ref = query(collection(db, "DODAACS"))
-  const dodaacs = useFirestoreQuery(["dodaacs"], ref)
+  const dodaacs = useFirestoreQuery(["dodaacs"], ref,{subscribe: false})
   const userRef = query(collection(db, "users"))
   const userMutation = useFirestoreCollectionMutation(userRef)
 
