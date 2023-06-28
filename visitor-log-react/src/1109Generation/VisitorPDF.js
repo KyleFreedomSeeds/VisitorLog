@@ -1,12 +1,11 @@
 import React from 'react';
 import {Text, View, StyleSheet, Page, PDFViewer, Document } from '@react-pdf/renderer';
-import { collection, orderBy, query, where } from 'firebase/firestore';
+import { collection, getDocs, orderBy, query, where } from 'firebase/firestore';
 import { db } from "lib/firebase"
 import { useState } from 'react';
 import moment from 'moment';
 import { useLocation } from 'react-router-dom';
 import { useVisitors } from 'VisitorContext';
-import { useFirestoreQueryData } from '@react-query-firebase/firestore';
 
 const styles = StyleSheet.create({
   row: {
@@ -50,20 +49,19 @@ function split(array, n) {
 
 function VisitorPDF() {
     const {base} = useVisitors()
-    const [visitors, setVisitors] = useState()
+    const [visitors, setVisitors] = useState(undefined)
     const {state} = useLocation()
     const {startDate, endDate} = state
-    console.log("#READ DATABASE")
     const ref = query(collection(db, "visitors"), where("signedOut", "!=", "null"), where("dodaac", "==", base.dodaac), where("signedOut", ">=", startDate), where("signedOut", "<=", endDate), orderBy("signedOut"))
-    const data = useFirestoreQueryData(["1109"],ref,{subscribe: false})
-    if (data.status === "success" && visitors === undefined) {setVisitors(split(data.data,20))}
+    if (visitors === undefined) {getDocs(ref).then((query) => setVisitors(split(query.docs.map(doc => doc.data()),20))); console.log("#READ DATABASE")}
+    console.log(visitors)
     return (
     <>
+    <PDFViewer width={window.innerWidth} height={window.innerHeight}>
+        <Document>
     {visitors !== undefined ? visitors.map(visitor => {
         return (
-            <PDFViewer width={window.innerWidth} height={window.innerHeight}>
-                <Document>
-                <Page orientation='landscape'>
+                <Page orientation='landscape' key={"pages"}>
                 <View style={{margin: 4}}>
                     <View key={"headerRow1"} style={[styles.row, {borderTopWidth: 1, borderTopColor: '#000',borderTopStyle: 'solid'}]}>
                         <View style={[styles.cell, { width: 43 }]}>
@@ -116,7 +114,7 @@ function VisitorPDF() {
                         <View style={[styles.cell, { width: 190, paddingTop: 10 }]}>
                             <Text style={{ fontFamily: 'Helvetica', fontSize: 8 }}>ORGANIZATION OR FIRM</Text>
                         </View>
-                        <View style={[styles.cell, {width: 190}]}> </View>
+                        <View style={[styles.cell, {width: 190}]}></View>
                         <View style={[styles.cell, {width: 90}]}></View>
                         <View style={[styles.cell, {width: 50, paddingTop: 10}]}>
                             <Text style={{ fontFamily: 'Helvetica', fontSize: 8 }}>IN</Text>
@@ -165,10 +163,10 @@ function VisitorPDF() {
                     </View>
                 </View>
             </Page>
-        </Document>
-        </PDFViewer>
         )
     }) : null}
+        </Document>
+    </PDFViewer>
     </>
     )
     }
