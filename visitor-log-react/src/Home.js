@@ -21,6 +21,7 @@ function Home() {
   const {visitors, visitorsQuery, base} = useVisitors()
   const submitVisitor = useForm()
   const submitBarcode = useForm()
+  const signOutVisitor = useForm()
   const [dateError, setDateError] = useState(false)
   const [dateRange, setDateRange] = useState([null, null])
   const [startDate, endDate] = dateRange
@@ -38,7 +39,6 @@ function Home() {
             submitVisitor.setValue("name", visitorInfo["LN"] + " " + visitorInfo["FN"] + " " + visitorInfo["MI"].substring(0,1))
           }
           submitVisitor.setValue("rank", visitorInfo["Rank"])
-          submitVisitor.setFocus("badge", {shouldSelect: true})
         }
       })
     }
@@ -51,7 +51,7 @@ function Home() {
           <p>Logged in as: {currentUser.email}<span onClick={() => {visitorsQuery.current.unsubscribe(); signOut(auth)}}>Sign Out</span></p>
         </div>
         <div className="buttons">
-          <Popup trigger={<button id="scanBarcode">Scan ID</button>} modal className="visitors">
+          <Popup trigger={<button id="scanBarcode">Scan ID</button>} modal className="visitors" onOpen={() => document.getElementById("formBarcode").focus()} onClose={() => submitBarcode.reset()}>
             {
             close => (
               <div>
@@ -69,7 +69,21 @@ function Home() {
           <FormProvider {...submitVisitor}>
             <SubmitvisitorModal/>
           </FormProvider>
-          <button onClick={() => {let badge = prompt("Enter Badge Number"); SignVisitorOut(badge, visitors); setTimeActive(new Date())}}>Sign Visitor Out</button>
+          <Popup trigger={<button>Sign Visitor Out</button>} modal className='visitors' onOpen={() => document.getElementById("formBadgeOut").focus()} onClose={() => signOutVisitor.reset()}>
+          {
+            close => (
+              <div>
+                <h3>Sign Visitor Out</h3>
+                <button style={{position:"absolute", top:"10px", right:"10px"}} onClick={() =>  {signOutVisitor.reset(); close(); setTimeActive(new Date())}}>X</button>
+                <form onSubmit={signOutVisitor.handleSubmit(data => {SignVisitorOut(data, visitors); signOutVisitor.reset()})}>
+                  <input type="text" name="formBadgeOut" id="formBadgeOut" required placeholder="Badge Number" {...signOutVisitor.register("badge")}/>
+                  {signOutVisitor.formState.errors.name && <label className="error" htmlFor="formBadgeOut">{signOutVisitor.formState.errors.name.message}</label>}
+
+                  <button type="submit" id="submitBarcode">Submit</button>
+                </form>
+              </div>
+            )}
+          </Popup>
           <Popup trigger={<button>Generate 1109</button>}>
             <ReactDatePicker required form="generate1109" placeholderText='Select 1109 Date Range' selectsRange={true} onChange={(update) => {setDateRange(update); setDateError(false)}} startDate={startDate} endDate={endDate} className='datePicker1109'/>
             <form id="generate1109" onSubmit={(e) => e.preventDefault()}>

@@ -3,7 +3,8 @@ import { analytics, db } from "./firebase"
 import { logEvent } from "firebase/analytics"
 
 
-export async function SignVisitorOut(bdg, visitors) {
+export async function SignVisitorOut(data, visitors) {
+    var bdg = data.badge
     if (bdg !== null) {
         const badge = parseInt(bdg)
 
