@@ -1,11 +1,9 @@
 import React from 'react';
-import {Text, View, StyleSheet, Page, PDFViewer, Document } from '@react-pdf/renderer';
+import {Text, View, StyleSheet, Page, Document } from '@react-pdf/renderer';
 import { collection, getDocs, orderBy, query, where } from 'firebase/firestore';
 import { db } from "lib/firebase"
 import { useState } from 'react';
 import moment from 'moment';
-import { useLocation } from 'react-router-dom';
-import { useVisitors } from 'VisitorContext';
 
 const styles = StyleSheet.create({
   row: {
@@ -47,18 +45,14 @@ function split(array, n) {
     }
   }
 
-function VisitorPDF() {
-    const {base} = useVisitors()
+function VisitorPDF({startDate, endDate, base}) {
     const [visitors, setVisitors] = useState(undefined)
-    const {state} = useLocation()
-    const {startDate, endDate} = state
-    const ref = query(collection(db, "visitors"), where("signedOut", "!=", "null"), where("dodaac", "==", base.dodaac), where("signedOut", ">=", startDate), where("signedOut", "<=", endDate), orderBy("signedOut"))
-    if (visitors === undefined) {getDocs(ref).then((query) => setVisitors(split(query.docs.map(doc => doc.data()),20))); console.log("#READ DATABASE")}
-    console.log(visitors)
+    var ref = ''
+    if (startDate !== null && endDate !== null)  {ref = query(collection(db, "visitors"), where("signedOut", "!=", "null"), where("dodaac", "==", base.dodaac), where("signedOut", ">=", startDate), where("signedOut", "<=", endDate), orderBy("signedOut"))}
+    if (visitors === undefined && startDate !== null && endDate !== null) {getDocs(ref).then((query) => setVisitors(split(query.docs.map(doc => doc.data()),20))); console.log("#READ DATABASE")}
     return (
     <>
-    <PDFViewer width={window.innerWidth} height={window.innerHeight}>
-        <Document>
+    <Document>
     {visitors !== undefined ? visitors.map(visitor => {
         return (
                 <Page orientation='landscape' key={"pages"}>
@@ -66,7 +60,7 @@ function VisitorPDF() {
                     <View key={"headerRow1"} style={[styles.row, {borderTopWidth: 1, borderTopColor: '#000',borderTopStyle: 'solid'}]}>
                         <View style={[styles.cell, { width: 43 }]}>
                             <Text style={{ fontFamily: 'Helvetica', fontSize: 8, textAlign: 'left' }}>YEAR</Text>
-                            <Text style={{ fontFamily: 'Helvetica', fontSize: 8, textAlign: 'left' }}>{moment(new Date()).format("YYYY")}</Text>
+                            <Text style={{ fontFamily: 'Helvetica', fontSize: 8, textAlign: 'left' }}>{moment(startDate).format("YYYY")}</Text>
                         </View>
                         <View style={[styles.cell, { width: 425}]}>
                             <Text style={{ fontFamily: 'Helvetica-Bold', fontSize: 10 }}>VISITOR REGISTER LOG</Text>
@@ -83,7 +77,7 @@ function VisitorPDF() {
                     <View key={"headerRow2"} style={ { flexDirection: 'row',height: 15}}>
                         <View style={[styles.cell, {width: 43, borderBottom: 0}]}>
                             <Text style={{ fontFamily: 'Helvetica', fontSize: 8, textAlign: 'left'}}>MONTH</Text>
-                            <Text style={{ fontFamily: 'Helvetica', fontSize: 8, textAlign: 'left' }}>{moment(new Date()).format("MMM")}</Text>
+                            <Text style={{ fontFamily: 'Helvetica', fontSize: 8, textAlign: 'left' }}>{moment(startDate).format("MMM")}</Text>
                         </View>
                         <View style={[styles.cell, { width: 425, borderBottomWidth: 1, borderBottomColor: '#000', borderBottomStyle: 'solid'}]}>
                             <Text style={{ fontFamily: 'Helvetica', fontSize: 8}}>VISITOR IDENTIFICATION</Text>
@@ -166,7 +160,6 @@ function VisitorPDF() {
         )
     }) : null}
         </Document>
-    </PDFViewer>
     </>
     )
     }

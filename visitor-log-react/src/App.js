@@ -61,7 +61,6 @@ function App() {
       visitorsQuery.current  = collectionData(ref, {idField: 'id'}).subscribe(visitors => setVisitors(visitors))
     }
   },[currentUser, dodaac])
-
   return (
     <FirebaseAppProvider firebaseConfig={firebaseConfig}>
     <QueryClientProvider client={queryClient}>

@@ -7,27 +7,30 @@ import { cardScan } from 'lib/cardScanning'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useState} from 'react'
 import "css/home.css"
-import { useNavigate } from 'react-router-dom'
 import moment from 'moment/moment'
 import ReactDatePicker from 'react-datepicker'
 import "react-datepicker/dist/react-datepicker.css"
 import Popup from 'reactjs-popup'
 import { useVisitors } from 'VisitorContext'
 import { Timeout } from 'Timeout'
+import { PDFDownloadLink } from '@react-pdf/renderer'
+import VisitorPDF from '1109Generation/VisitorPDF'
 
 function Home() {
   const {currentUser, setTimeActive} = useAuthValue()
-  const navigate = useNavigate()
-  const {visitors, visitorsQuery} = useVisitors()
+  const {visitors, visitorsQuery, base} = useVisitors()
   const submitVisitor = useForm()
+  const submitBarcode = useForm()
+  const [dateError, setDateError] = useState(false)
   const [dateRange, setDateRange] = useState([null, null])
   const [startDate, endDate] = dateRange
 
-
-  const scanId = barcode => {
-    if (barcode !== null && barcode !== "") {
-      cardScan(barcode, visitors).then(visitorInfo => {
+  function scanId(data) {
+    if (data.barcode !== null && data.barcode !== "") {
+      cardScan(data.barcode, visitors).then(visitorInfo => {
         if (visitorInfo !== null) {
+          submitBarcode.reset()
+          // implement multi visitor single location
           document.getElementById("manualSubmit").click()
           if ("FMN" in visitorInfo) {
             submitVisitor.setValue("name", visitorInfo["FMN"])
@@ -48,15 +51,36 @@ function Home() {
           <p>Logged in as: {currentUser.email}<span onClick={() => {visitorsQuery.current.unsubscribe(); signOut(auth)}}>Sign Out</span></p>
         </div>
         <div className="buttons">
-          <button onClick={() => {let barcode = prompt("Scan ID"); scanId(barcode); setTimeActive(new Date())}}>Scan ID</button>
+          <Popup trigger={<button id="scanBarcode">Scan ID</button>} modal className="visitors">
+            {
+            close => (
+              <div>
+                <h3>Scan ID</h3>
+                <button style={{position:"absolute", top:"10px", right:"10px"}} onClick={() =>  {submitBarcode.reset(); close(); setTimeActive(new Date())}}>X</button>
+                <form onSubmit={submitBarcode.handleSubmit(scanId)}>
+                  <input type="text" name="formBarcode" id="formBarcode" required placeholder="Barcode" {...submitBarcode.register("barcode")}/>
+                  {submitBarcode.formState.errors.name && <label className="error" htmlFor="formBarcode">{submitBarcode.formState.errors.name.message}</label>}
+
+                  <button type="submit" id="submitBarcode">Submit</button>
+                </form>
+              </div>
+            )}
+          </Popup>
           <FormProvider {...submitVisitor}>
             <SubmitvisitorModal/>
           </FormProvider>
           <button onClick={() => {let badge = prompt("Enter Badge Number"); SignVisitorOut(badge, visitors); setTimeActive(new Date())}}>Sign Visitor Out</button>
           <Popup trigger={<button>Generate 1109</button>}>
-            <ReactDatePicker required form="generate1109" placeholderText='Select 1109 Date Range' selectsRange={true} onChange={(update) => setDateRange(update)} startDate={startDate} endDate={endDate}/>
-            <form id="generate1109" onSubmit={(e) => {e.preventDefault(); navigate("1109-pdf", {state: {startDate: startDate, endDate: endDate}})}}>
-              <button id='button1109' type='submit'>View/Download 1109</button>
+            <ReactDatePicker required form="generate1109" placeholderText='Select 1109 Date Range' selectsRange={true} onChange={(update) => {setDateRange(update); setDateError(false)}} startDate={startDate} endDate={endDate} className='datePicker1109'/>
+            <form id="generate1109" onSubmit={(e) => e.preventDefault()}>
+                {dateError ? <p style={{color: "red", fontSize: "10pt"}}>Please select a date range!</p> : null}
+                <button id='button1109'>
+                <PDFDownloadLink document={<VisitorPDF startDate={startDate} endDate={endDate} base={base}/>} fileName={"1109 " + moment(startDate).format("DD MMM YY") + " - " + moment(endDate).format("DD MMM YY")} className='download1109' onClick={(e) => {
+                  if (startDate == null || endDate == null) {
+                    setDateError(true)
+                    e.preventDefault()}
+                  }}>{({loading}) => loading ? "Loading.." : "Download 1109"}</PDFDownloadLink>
+                </button>
             </form>
           </Popup>
           <Timeout/>

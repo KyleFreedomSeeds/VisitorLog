@@ -73,6 +73,15 @@
     width: 100%;
     height: 50px;
   }
+  #button1109:hover {
+    animation: buttonScaleHover 0.3s ease-in-out;
+  }
+
+  .download1109 {
+    text-decoration: none;
+    color:#ffffff;
+  }
+
   .buttons button, .buttons PDFDownloadLink, #button1109 {
     background-color: #bc9f28;
     color: #ffffff;

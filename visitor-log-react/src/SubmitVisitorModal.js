@@ -95,6 +95,7 @@ function SubmitvisitorModal() {
             {formState.escort && <label className="error" htmlFor="formEscort">{formState.escort.message}</label>}
 
             <button type="submit" id="submitNewVisitor">Submit</button>
+            {/* add button to copy data but submit new visitor */}
           </form>
         </div>
       )}
