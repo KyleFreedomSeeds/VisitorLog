@@ -47,9 +47,11 @@ function split(array, n) {
 
 function VisitorPDF({startDate, endDate, base}) {
     const [visitors, setVisitors] = useState(undefined)
+    if (endDate !== null) {endDate = moment(endDate).endOf("day").toDate()}
     var ref = ''
     if (startDate !== null && endDate !== null)  {ref = query(collection(db, "visitors"), where("signedOut", "!=", "null"), where("dodaac", "==", base.dodaac), where("signedOut", ">=", startDate), where("signedOut", "<=", endDate), orderBy("signedOut"))}
     if (visitors === undefined && startDate !== null && endDate !== null) {getDocs(ref).then((query) => setVisitors(split(query.docs.map(doc => doc.data()),20))); console.log("#READ DATABASE")}
+
     return (
     <>
     <Document>
@@ -77,7 +79,7 @@ function VisitorPDF({startDate, endDate, base}) {
                     <View key={"headerRow2"} style={ { flexDirection: 'row',height: 15}}>
                         <View style={[styles.cell, {width: 43, borderBottom: 0}]}>
                             <Text style={{ fontFamily: 'Helvetica', fontSize: 8, textAlign: 'left'}}>MONTH</Text>
-                            <Text style={{ fontFamily: 'Helvetica', fontSize: 8, textAlign: 'left' }}>{moment(startDate).format("MMM")}</Text>
+                            <Text style={{ fontFamily: 'Helvetica', fontSize: 8, textAlign: 'left' }}>{moment(new Date(visitor[0]?.created.seconds*1000)).format("MMM")}</Text>
                         </View>
                         <View style={[styles.cell, { width: 425, borderBottomWidth: 1, borderBottomColor: '#000', borderBottomStyle: 'solid'}]}>
                             <Text style={{ fontFamily: 'Helvetica', fontSize: 8}}>VISITOR IDENTIFICATION</Text>
