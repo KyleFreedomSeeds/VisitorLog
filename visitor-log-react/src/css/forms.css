@@ -55,3 +55,9 @@
   color: white;
   background-color: rgb(25, 118, 210);
 }
+
+#registerButton:disabled{
+  background-color: #cccccc;
+  border: 1px solid #999999;
+  color: #666666;
+}

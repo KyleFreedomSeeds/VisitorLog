@@ -12,8 +12,18 @@ function Login(){
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('') 
   const [error, setError] = useState('')
+  const [capsCheck, setCapsCheck] = useState(false)
   const {setTimeActive} = useAuthValue()
   const navigate = useNavigate()
+
+  const checkCaps = (event) => {
+    if(event.getModifierState("CapsLock")) {
+      console.log("T")
+      setCapsCheck(true)
+    } else {
+      setCapsCheck(false)
+    }
+  }
 
   const login = e => {
     e.preventDefault()
@@ -45,13 +55,14 @@ function Login(){
             required
             placeholder="Enter your email"
             onChange={e => setEmail(e.target.value)}/>
-          
           <input 
             type='password'
             value={password}
             required
             placeholder='Enter your password'
-            onChange={e => setPassword(e.target.value)}/>
+            onChange={e => setPassword(e.target.value)}
+            onKeyUp={checkCaps}/>
+          {capsCheck && <p style={{color: "red", margin: 0}}>Caps Lock is On!</p>}
           <a href='/reset-password' style={{textDecoration: "none", color: "#1976d2"}}>Forgot your password?</a>
           <div className='authFooter'>
             <a href='/register' style={{textDecoration: "none", color: "#1976d2"}}>Register</a>

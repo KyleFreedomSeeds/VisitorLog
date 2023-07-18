@@ -37,9 +37,10 @@ function SubmitvisitorModal() {
             signedOut: "null",
             dodaac: base.dodaac,
           })
-
+          
           if(multiplePersonnel) {
             setVisitorLoc([data.org, data.dest, data.escort])
+            document.getElementById("closeSubmitVisitor").click()
             document.getElementById("scanBarcode").click()
           } else {
             setVisitorLoc(["", "", ""])
@@ -84,12 +85,12 @@ function SubmitvisitorModal() {
 
   return (
     <>
-    <Popup trigger={<button id="manualSubmit">Manual Submit</button>} modal className="visitors" onOpen={() => {if(getValues("name") !== "") {document.getElementById("formbadge").focus()}else(document.getElementById('formName').focus())}} onClose={() => {reset()}}>
+    <Popup trigger={<button id="manualSubmit">Manual Submit</button>} modal closeOnDocumentClick={false} className="visitors" onOpen={() => {if(getValues("name") !== "") {document.getElementById("formbadge").focus()}else(document.getElementById('formName').focus())}} onClose={() => {reset()}}>
       {
       close => (
         <div>
           <h3>New Visitor</h3>
-          <button style={{position:"absolute", top:"10px", right:"10px"}} onClick={() =>  {reset(); close(); setTimeActive(new Date())}}>X</button>
+          <button id="closeSubmitVisitor" style={{position:"absolute", top:"10px", right:"10px"}} onClick={() =>  {reset(); close(); setTimeActive(new Date())}}>X</button>
           <form onSubmit={handleSubmit(data => {submit(data)})}>
             <input type="text" name="formName" id="formName" required placeholder="Full Name" {...register("name", {pattern: {value: /^[^0-9]+$/i, message: "Name must not contain numbers!"}})}/>
             {formState.errors.name && <label className="error" htmlFor="formName">{formState.errors.name.message}</label>}

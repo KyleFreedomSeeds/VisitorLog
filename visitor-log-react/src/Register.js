@@ -16,6 +16,14 @@ function Register() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [dodaac, setDodaac] = useState('')
   const [error, setError] = useState('')
+  const [longEnough, setLongEnough] = useState(false)
+  const [validEmail, setValidEmail] = useState(false)
+  const [passMatch, setPassMatch] = useState(false)
+  const [lowerCaseV, setLowerCaseV] = useState(false)
+  const [upperCaseV, setUpperCaseV] = useState(false)
+  const [numberV, setNumberV] = useState(false)
+  const [symbolV, setSymbolV] = useState(false)
+  const [isValid, setisValid] = useState(false)
   const navigate = useNavigate()
   const {setTimeActive} = useAuthValue()
   console.log("#READ DATABASE")
@@ -24,47 +32,37 @@ function Register() {
   const userRef = query(collection(db, "users"))
   const userMutation = useFirestoreCollectionMutation(userRef)
 
-  const validatePassword = () => {
-    let isValid = true
-    if (password !== '' && confirmPassword !== ''){
-      if (password !== confirmPassword) {
-        isValid = false
-        setError('Passwords does not match')
-      }
-    }
+  var lowerCase = /[a-z]/g
+  var upperCase = /[A-Z]/g
+  var number = /[0-9]/g
+  var symbol = /\W/g
 
-    if (dodaac === '' || dodaac === "Select Dodaac..") {
-      isValid = false
-      setError('DODAAC is required!')
-    }
-
-    if (email.substring(email.length - 4, email.length) !== ".mil") {
-      isValid = false
-      setError("You muse use a .mil email!")
-    }
-    return isValid
-  }
-
+  if (password.match(lowerCase) && !lowerCaseV) {setLowerCaseV(true)}else if (!password.match(lowerCase) && lowerCaseV){setLowerCaseV(false)}
+  if (password.match(upperCase) && !upperCaseV) {setUpperCaseV(true)}else if (!password.match(upperCase) && upperCaseV){setUpperCaseV(false)}
+  if (password.match(number) && !numberV) {setNumberV(true)}else if (!password.match(number) && numberV){setNumberV(false)}
+  if (password.match(symbol) && !symbolV) {setSymbolV(true)}else if (!password.match(symbol) && symbolV){setSymbolV(false)}
+  if (password.length >= 8 && !longEnough) {setLongEnough(true)}else if(password.length < 8 && longEnough){setLongEnough(false)}
+  if (email.substring(email.length - 4, email.length) === ".mil" && !validEmail) {setValidEmail(true)}else if(email.substring(email.length - 4, email.length) !== ".mil" && validEmail){setValidEmail(false)}
+  if (password !== '' && confirmPassword !== '' && password === confirmPassword && !passMatch){setPassMatch(true)}else if (password !== '' && confirmPassword !== '' && password !== confirmPassword && passMatch){setPassMatch(false)}
+  if (longEnough && validEmail && passMatch && lowerCaseV && upperCaseV && numberV && symbolV && dodaac!== '' && !isValid) {setisValid(true)}else if ((!longEnough || !validEmail || !passMatch|| !lowerCaseV || !upperCaseV || !numberV|| !symbolV) && isValid) {setisValid(false)}
   const register = e => {
     e.preventDefault()
     setError('')
-    if(validatePassword()) {
       // Create a new user with email and password using firebase
-        createUserWithEmailAndPassword(auth, email, password)
-        .then(() => {
-          console.log("#WROTE DATABASE")
-          userMutation.mutate({
-            dodaac: dodaac,
-            uid: auth.currentUser.uid}
-          )
-          sendEmailVerification(auth.currentUser)   
-          .then(() => {
-            setTimeActive(true)
-            navigate('/verify-email')
-          }).catch((err) => alert(err.message))
-        })
-        .catch(err => setError(handleFirebaseError(err.message)))
-    }
+    createUserWithEmailAndPassword(auth, email, password)
+    .then(() => {
+      console.log("#WROTE DATABASE")
+      userMutation.mutate({
+        dodaac: dodaac,
+        uid: auth.currentUser.uid}
+      )
+      sendEmailVerification(auth.currentUser)   
+      .then(() => {
+        setTimeActive(true)
+        navigate('/verify-email')
+      }).catch((err) => alert(err.message))
+    })
+    .catch(err => setError(handleFirebaseError(err.message)))
     setEmail('')
     setPassword('')
     setConfirmPassword('')
@@ -97,13 +95,20 @@ function Register() {
             placeholder='Confirm password'
             onChange={e => setConfirmPassword(e.target.value)}/>
             
-            <select onChange={e => setDodaac(e.target.value)}>
-              <option key="select">Select Dodaac..</option>
+            <select required onChange={e => setDodaac(e.target.value)}>
               {dodaacs.status === "success" && dodaacs.data.docs.map(docSnap => 
                     <option key={docSnap.data().dodaac}>{docSnap.data().dodaac}</option>
                   )}
             </select>
-          <button type='submit'>Register</button>
+        <button disabled={!isValid} type='submit' id='registerButton'>Register</button>
+          { !validEmail && <p style={{color: 'red', margin: 0}}>You must use a .mil email address!</p>}
+          { !longEnough && <p style={{color: 'red', margin: 0}}>Password must be at least 8 characters!</p>}
+          { !upperCaseV && <p style={{color: 'red', margin: 0}}>Password must contain at least 1 uppercase letter!</p>}
+          { !lowerCaseV && <p style={{color: 'red', margin: 0}}>Password must contain at least 1 lowercase letter</p>}
+          { !numberV && <p style={{color: 'red', margin: 0}}>Password must contain at least 1 number!</p>}
+          { !symbolV && <p style={{color: 'red', margin: 0}}>Password must contain at least 1 symbol!</p>}
+          { !passMatch && <p style={{color: 'red', margin: 0}}>Password must match!</p>}
+          { dodaac === '' && <p style={{color: 'red', margin: 0}}>You must select a DODAAC!</p>}
           <span><a href='/login' style={{textDecoration: "none", color: "#1976d2"}}>Login to existing Account </a></span>
           <span><a href='/register-dodaac' style={{textDecoration: "none", color: "#1976d2"}}>Register New Dodaac</a></span>
         </form>  

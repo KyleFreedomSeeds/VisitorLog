@@ -24,6 +24,7 @@ function Home() {
   const signOutVisitor = useForm()
   const [dateError, setDateError] = useState(false)
   const [dateRange, setDateRange] = useState([null, null])
+  //const [barcodePopup, setBarcodePopup] = useState(false)
   const [startDate, endDate] = dateRange
 
   function scanId(data) {
@@ -31,6 +32,7 @@ function Home() {
       cardScan(data.barcode, visitors).then(visitorInfo => {
         if (visitorInfo !== null) {
           submitBarcode.reset()
+          document.getElementById("closeBarcode").click()
           // implement multi visitor single location
           document.getElementById("manualSubmit").click()
           if ("FMN" in visitorInfo) {
@@ -51,12 +53,12 @@ function Home() {
           <p>Logged in as: {currentUser.email}<span onClick={() => {visitorsQuery.current.unsubscribe(); signOut(auth)}}>Sign Out</span></p>
         </div>
         <div className="buttons">
-          <Popup trigger={<button id="scanBarcode">Scan ID</button>} modal className="visitors" onOpen={() => document.getElementById("formBarcode").focus()} onClose={() => submitBarcode.reset()}>
+          <Popup trigger={<button id="scanBarcode">Scan ID</button>} closeOnDocumentClick={false} modal className="visitors" onOpen={() => document.getElementById("formBarcode").focus()} onClose={() => submitBarcode.reset()}>
             {
             close => (
               <div>
                 <h3>Scan ID</h3>
-                <button style={{position:"absolute", top:"10px", right:"10px"}} onClick={() =>  {submitBarcode.reset(); close(); setTimeActive(new Date())}}>X</button>
+                <button id='closeBarcode' style={{position:"absolute", top:"10px", right:"10px"}} onClick={() =>  {submitBarcode.reset(); close(); setTimeActive(new Date())}}>X</button>
                 <form onSubmit={submitBarcode.handleSubmit(scanId)}>
                   <input type="text" name="formBarcode" id="formBarcode" required placeholder="Barcode" {...submitBarcode.register("barcode")}/>
                   {submitBarcode.formState.errors.name && <label className="error" htmlFor="formBarcode">{submitBarcode.formState.errors.name.message}</label>}
@@ -69,7 +71,7 @@ function Home() {
           <FormProvider {...submitVisitor}>
             <SubmitvisitorModal/>
           </FormProvider>
-          <Popup trigger={<button>Sign Visitor Out</button>} modal className='visitors' onOpen={() => document.getElementById("formBadgeOut").focus()} onClose={() => signOutVisitor.reset()}>
+          <Popup trigger={<button>Sign Visitor Out</button>} modal closeOnDocumentClick={false} className='visitors' onOpen={() => document.getElementById("formBadgeOut").focus()} onClose={() => signOutVisitor.reset()}>
           {
             close => (
               <div>

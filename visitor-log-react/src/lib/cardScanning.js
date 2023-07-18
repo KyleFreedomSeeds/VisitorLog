@@ -1,5 +1,17 @@
 import { checkDBIDS } from "./checkDBIDS"
 
+// '**********************************************
+// 'DoD ID Card Scanning Function Library
+// 'Version 23 August 2022
+// 'Author- MSgt Bob Kaster (robert.kaster@us.af.mil)
+// 'Ported to Javascript by- SrA Kyle Condon (kyle.condon@us.af.mil)
+// ' Data used to develop this list came from the DMDC DoD ID Bar Codes & Software Development Kit, Version 7.5.1, Sep 2014
+// '  and DMDC Memorandum "Changes to the Two-Dimensional Barcode on DoD Identification Cards", 15 Aug 2016
+// ' Driver License data from AAMVA DL/ID Card Design Standard 2020
+// ' - https://www.aamva.org/topics/driver-license-and-identification-standards and https://www.aamva.org/getmedia/99ac7057-0f4d-4461-b0a2-3a5532e1b35c/AAMVA-2020-DLID-Card-Design-Standard.pdf
+// '**********************************************
+
+
 export async function cardScan(scanned) {
     let barcode = scanned.replace("'", "")
     let ScanLib = {}
@@ -89,50 +101,7 @@ export async function cardScan(scanned) {
 }
 
 
-/* '**********************************************
-'DoD ID Card Scanning Function Library
-'Version 23 August 2022
-'Author- MSgt Bob Kaster (robert.kaster@us.af.mil)
-'Ported to Javascript by- SrA Kyle Condon (kyle.condon@us.af.mil)
-' Data used to develop this list came from the DMDC DoD ID Bar Codes & Software Development Kit, Version 7.5.1, Sep 2014
-'  and DMDC Memorandum "Changes to the Two-Dimensional Barcode on DoD Identification Cards", 15 Aug 2016
-' Driver License data from AAMVA DL/ID Card Design Standard 2020
-' - https://www.aamva.org/topics/driver-license-and-identification-standards and https://www.aamva.org/getmedia/99ac7057-0f4d-4461-b0a2-3a5532e1b35c/AAMVA-2020-DLID-Card-Design-Standard.pdf
-'**********************************************
-
-
-Public Function ConvDec(pNumber As String, pBase As Integer) As Double
-'ConvDec is able to convert numbers up to base 35 to base 10
-   Dim base, length, pos, temp, tmp As Long
-   Dim MyValue As Variant 'variant - to hold letters
-   Dim MaxLetter, i As Integer
-   ConvDec = 0
-   base = Len(pNumber) - 1
-   length = Len(pNumber)
-   pos = 1
-   ' is pNumber within base range
-   MaxLetter = pBase - 1
-   For i = 1 To length
-      If Asc(Mid(pNumber, i, 1)) - 55 > MaxLetter Then
-         MsgBox "'" & pNumber & "' is not a base" & pBase & " number"
-         Exit Function
-      End If
-   Next
-   While base >= 0
-      MyValue = Mid(pNumber, pos, 1)
-      'A = ascii 65 and Z = ascii 90
-      'convert letter to value
-      If Asc(UCase(MyValue)) >= 65 And Asc(UCase(MyValue)) <= 90 Then
-         tmp = CLng(Asc(UCase(MyValue)) - 55)
-      Else
-         tmp = CLng(MyValue)
-      End If
-      temp = temp + (tmp * (pBase ^ (base)))
-      base = base - 1
-      pos = pos + 1
-   Wend
-   ConvDec = temp
-End Function
+/*
 Public Function gigIDldap(useEmail As Boolean, Optional mail As String, Optional gigid As String) As Variant
     Dim AFDS As String
     Const ADS_SCOPE_SUBTREE = 2

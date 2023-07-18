@@ -33,7 +33,7 @@ export const performance = getPerformance(app)
 
 export function handleFirebaseError(err) {
   switch (err){
-    case "Firebase: Error (auth/network-request-failed).": return "Check your internet connection and try again!";
+    case "Firebase: A network AuthError (such as timeout, interrupted connection or unreachable host) has occurred. (auth/network-request-failed).": return "Check your internet connection and try again!";
     case "Firebase: There is no user record corresponding to this identifier. The user may have been deleted. (auth/user-not-found).": return "A user with this email is not registered!";
     case "Firebase: The password is invalid or the user does not have a password. (auth/wrong-password).": return "Invalid password!";
     case "Firebase: The email address is already in use by another account. (auth/email-already-in-use).": return "Email is already registered!"
