@@ -19,7 +19,6 @@ export async function cardScan(scanned) {
 
     switch (barcode.charAt(0)) {
         case "@":
-            console.log(barcode.search("ANSI") !== -1)
             if (barcode.search("ANSI") !== -1) {
                 ScanLib["Rank"] = "CIV"
                 splitBarcode = barcode.split(" ")

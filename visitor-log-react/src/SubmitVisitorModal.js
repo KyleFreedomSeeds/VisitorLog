@@ -106,10 +106,8 @@ function SubmitvisitorModal() {
 
             <input type="text" name="formEscort" id="formEscort" required placeholder="Escort" defaultValue={existingEscort} {...register("escort", {pattern: {value: /^[A-Za-z]+$/i, message: "Escort must not contain numbers!"}})}/>
             {formState.escort && <label className="error" htmlFor="formEscort">{formState.escort.message}</label>}
-
-            <button type="submit" id="submitNewVisitor" onClick={() => setMultiplePersonnel(false)}>Sign In Single Personnel</button>
-            <button type="submit" id="multiPersonnel" onClick={() => setMultiplePersonnel(true)}>Sign In Multiple Personnel</button>
-            {/* add button to copy data but submit new visitor */}
+            <button type="submit" id="submitNewVisitor" onClick={() => setMultiplePersonnel(false)}>{multiplePersonnel ? "Sign In Last Personnel" : "Sign In Single Personnel"}</button>
+            <button type="submit" id="multiPersonnel" onClick={() => setMultiplePersonnel(true)}>{multiplePersonnel ? "Sign In Another Personnel" : "Sign In Multiple Personnel"}</button>
           </form>
         </div>
       )}

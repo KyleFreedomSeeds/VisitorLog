@@ -219,6 +219,7 @@
     position: relative;
     bottom: 0px;
     right: 0px;
+    margin-top: 5px;
   }
 
   .visitors-content form button[type="submit"]:hover {

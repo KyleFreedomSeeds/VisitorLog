@@ -18,7 +18,6 @@ function Login(){
 
   const checkCaps = (event) => {
     if(event.getModifierState("CapsLock")) {
-      console.log("T")
       setCapsCheck(true)
     } else {
       setCapsCheck(false)

@@ -28,7 +28,7 @@ function RegisterDodaac() {
       }
       return null
     })
-    console.log(error === '')
+
     if (error === '') {
       console.log("#WROTE DATABASE")
       dodaacMutation.mutate({
