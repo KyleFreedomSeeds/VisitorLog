@@ -23,6 +23,7 @@ function SubmitvisitorModal() {
   async function submit(data) {
     setTimeActive(new Date())
     document.getElementById("submitNewVisitor").setAttribute("disabled", "disabled")
+    document.getElementById("multiPersonnel").setAttribute("disabled", "disabled")
       validateVisitor(data).then(valid => {
         if (valid !== null) {
           console.log("#WROTE DATABASE")
@@ -37,7 +38,6 @@ function SubmitvisitorModal() {
             signedOut: "null",
             dodaac: base.dodaac,
           })
-          
           if(multiplePersonnel) {
             setVisitorLoc([data.org, data.dest, data.escort])
             document.getElementById("closeSubmitVisitor").click()
@@ -50,6 +50,7 @@ function SubmitvisitorModal() {
           logEvent(analytics, "visitor_sign_in")
         }
         document.getElementById("submitNewVisitor").removeAttribute("disabled")
+        document.getElementById("multiPersonnel").removeAttribute("disabled")
       })
     }
 
