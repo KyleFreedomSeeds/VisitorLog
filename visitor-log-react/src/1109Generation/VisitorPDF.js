@@ -49,7 +49,7 @@ function VisitorPDF({startDate, endDate, base}) {
     const [visitors, setVisitors] = useState(undefined)
     if (endDate !== null) {endDate = moment(endDate).endOf("day").toDate()}
     var ref = ''
-    if (startDate !== null && endDate !== null)  {ref = query(collection(db, "visitors"), where("signedOut", "!=", "null"), where("dodaac", "==", base.dodaac), where("signedOut", ">=", startDate), where("signedOut", "<=", endDate), orderBy("signedOut"))}
+    if (startDate !== null && endDate !== null)  {ref = query(collection(db, "visitors"), where("signedOut", "!=", "null"), where("base", "==", base.base), where("area", "==", base.area), where("signedOut", ">=", startDate), where("signedOut", "<=", endDate), orderBy("signedOut"))}
     if (visitors === undefined && startDate !== null && endDate !== null) {getDocs(ref).then((query) => setVisitors(split(query.docs.map(doc => doc.data()),20))); console.log("#READ DATABASE")}
 
     return (
@@ -69,11 +69,11 @@ function VisitorPDF({startDate, endDate, base}) {
                         </View>
                         <View style={[styles.cell, { width: 190 }]}>
                             <Text style={{ fontFamily: 'Helvetica', fontSize: 8, textAlign: 'left'}}>ORGANIZATION</Text>
-                            <Text style={{ fontFamily: 'Helvetica', fontSize: 8, textAlign: 'left'}}>{base.squadron}</Text>
+                            <Text style={{ fontFamily: 'Helvetica', fontSize: 8, textAlign: 'left'}}>{base.base}</Text>
                         </View>
                         <View style={[styles.cell, { width: 190 }]}>
                             <Text style={{ fontFamily: 'Helvetica', fontSize: 8, textAlign: 'left'}}>LOCATION</Text>
-                            <Text style={{ fontFamily: 'Helvetica', fontSize: 8, textAlign: 'left'}}>{base.base}</Text>
+                            <Text style={{ fontFamily: 'Helvetica', fontSize: 8, textAlign: 'left'}}>{base.area}</Text>
                         </View>
                     </View>
                     <View key={"headerRow2"} style={ { flexDirection: 'row',height: 15}}>

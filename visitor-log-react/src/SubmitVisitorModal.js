@@ -10,20 +10,19 @@ import { useAuthValue } from "AuthContext"
 import { useState } from "react"
 
 
-function SubmitvisitorModal() {
+function SubmitvisitorModal({submitPopupOpen, closeSubmitModal, setSubmitPopupOpen, setBarcodePopupOpen}) {
   const {setTimeActive} = useAuthValue()
   const ref = collection(db, "visitors")
   const mutation = useFirestoreCollectionMutation(ref)
-  const { register, reset, handleSubmit, formState, getValues} = useFormContext()
+  const { register, reset, handleSubmit, formState, getValues, setValue} = useFormContext()
   const {visitors, base} = useVisitors()
   const [visitorLoc, setVisitorLoc] = useState(["", "", ""])
-  const [multiplePersonnel, setMultiplePersonnel] = useState(false)
   const [existingOrg, existingDest, existingEscort] = visitorLoc
   
   async function submit(data) {
+    console.log(data.multiple)
     setTimeActive(new Date())
     document.getElementById("submitNewVisitor").setAttribute("disabled", "disabled")
-    document.getElementById("multiPersonnel").setAttribute("disabled", "disabled")
       validateVisitor(data).then(valid => {
         if (valid !== null) {
           console.log("#WROTE DATABASE")
@@ -36,21 +35,24 @@ function SubmitvisitorModal() {
             escort: data.escort.toUpperCase(),
             created: new Date(),
             signedOut: "null",
-            dodaac: base.dodaac,
+            base: base.base,
+            area: base.area,
           })
-          if(multiplePersonnel) {
+          if(data.multiple) {
             setVisitorLoc([data.org, data.dest, data.escort])
-            document.getElementById("closeSubmitVisitor").click()
-            document.getElementById("scanBarcode").click()
+            closeSubmitModal()
+            setBarcodePopupOpen(o => !o)
+            setValue('name', '')
+            setValue('rank', '')
+            setValue('badge', '')
           } else {
             setVisitorLoc(["", "", ""])
+            reset()
+            closeSubmitModal()
           }
-
-          reset()
           logEvent(analytics, "visitor_sign_in")
         }
         document.getElementById("submitNewVisitor").removeAttribute("disabled")
-        document.getElementById("multiPersonnel").removeAttribute("disabled")
       })
     }
 
@@ -86,12 +88,12 @@ function SubmitvisitorModal() {
 
   return (
     <>
-    <Popup trigger={<button id="manualSubmit">Manual Submit</button>} modal closeOnDocumentClick={false} className="visitors" onOpen={() => {if(getValues("name") !== "") {document.getElementById("formbadge").focus()}else(document.getElementById('formName').focus())}} onClose={() => {reset()}}>
+    <button id="manualSubmit" onClick={() => setSubmitPopupOpen(o => !o)}>Manual Submit</button>
+    <Popup modal closeOnDocumentClick={false} open={submitPopupOpen} className="visitors" onOpen={() => {if(getValues("name") !== "") {document.getElementById("formbadge").focus()}else(document.getElementById('formName').focus())}} onClose={() => {reset()}}>
       {
-      close => (
         <div>
           <h3>New Visitor</h3>
-          <button id="closeSubmitVisitor" style={{position:"absolute", top:"10px", right:"10px"}} onClick={() =>  {reset(); close(); setTimeActive(new Date())}}>X</button>
+          <button id="closeSubmitVisitor" style={{position:"absolute", top:"10px", right:"10px"}} onClick={() =>  {closeSubmitModal(); setTimeActive(new Date())}}>X</button>
           <form onSubmit={handleSubmit(data => {submit(data)})}>
             <input type="text" name="formName" id="formName" required placeholder="Full Name" {...register("name", {pattern: {value: /^[^0-9]+$/i, message: "Name must not contain numbers!"}})}/>
             {formState.errors.name && <label className="error" htmlFor="formName">{formState.errors.name.message}</label>}
@@ -107,11 +109,14 @@ function SubmitvisitorModal() {
 
             <input type="text" name="formEscort" id="formEscort" required placeholder="Escort" defaultValue={existingEscort} {...register("escort", {pattern: {value: /^[A-Za-z]+$/i, message: "Escort must not contain numbers!"}})}/>
             {formState.escort && <label className="error" htmlFor="formEscort">{formState.escort.message}</label>}
-            <button type="submit" id="submitNewVisitor" onClick={() => setMultiplePersonnel(false)}>{multiplePersonnel ? "Sign In Last Personnel" : "Sign In Single Personnel"}</button>
-            <button type="submit" id="multiPersonnel" onClick={() => setMultiplePersonnel(true)}>{multiplePersonnel ? "Sign In Another Personnel" : "Sign In Multiple Personnel"}</button>
-          </form>
+            <label style={{display: "flex", fontSize: "9pt", alignItems: "left"}}>
+            <input type="checkbox" name="formMultiple" id="formMultiple" {...register("multiple")} style={{margin: "0px", marginRight: "1px", width: "5%"}}/>Copy Forward Multi-Personnel Info
+            </label>
+            <button type='submit' id="submitNewVisitor" >Sign In Personnel</button>
+            </form>
+            
         </div>
-      )}
+      }
     </Popup>
     </>
   )

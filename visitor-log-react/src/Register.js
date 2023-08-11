@@ -1,4 +1,4 @@
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
 import 'css/forms.css'
 import {auth, db} from 'lib/firebase'
 import {useNavigate} from 'react-router-dom'
@@ -6,7 +6,8 @@ import {createUserWithEmailAndPassword, sendEmailVerification} from 'firebase/au
 import {useAuthValue} from './AuthContext'
 import { handleFirebaseError } from 'lib/firebase'
 import { collection, query } from "firebase/firestore"
-import { useFirestoreQuery, useFirestoreCollectionMutation} from '@react-query-firebase/firestore'
+import { useFirestoreCollectionMutation} from '@react-query-firebase/firestore'
+import { collectionData } from 'rxfire/firestore'
 
 
 function Register() {
@@ -14,7 +15,8 @@ function Register() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [dodaac, setDodaac] = useState('')
+  const [base, setBase] = useState('')
+  const [bases, setBases] = useState()
   const [error, setError] = useState('')
   const [longEnough, setLongEnough] = useState(false)
   const [validEmail, setValidEmail] = useState(false)
@@ -26,9 +28,6 @@ function Register() {
   const [isValid, setisValid] = useState(false)
   const navigate = useNavigate()
   const {setTimeActive} = useAuthValue()
-  console.log("#READ DATABASE")
-  const ref = query(collection(db, "DODAACS"))
-  const dodaacs = useFirestoreQuery(["dodaacs"], ref,{subscribe: false})
   const userRef = query(collection(db, "users"))
   const userMutation = useFirestoreCollectionMutation(userRef)
 
@@ -44,7 +43,16 @@ function Register() {
   if (password.length >= 8 && !longEnough) {setLongEnough(true)}else if(password.length < 8 && longEnough){setLongEnough(false)}
   if (email.substring(email.length - 4, email.length) === ".mil" && !validEmail) {setValidEmail(true)}else if(email.substring(email.length - 4, email.length) !== ".mil" && validEmail){setValidEmail(false)}
   if (password !== '' && confirmPassword !== '' && password === confirmPassword && !passMatch){setPassMatch(true)}else if (password !== '' && confirmPassword !== '' && password !== confirmPassword && passMatch){setPassMatch(false)}
-  if (longEnough && validEmail && passMatch && lowerCaseV && upperCaseV && numberV && symbolV && dodaac!== '' && !isValid) {setisValid(true)}else if ((!longEnough || !validEmail || !passMatch|| !lowerCaseV || !upperCaseV || !numberV|| !symbolV) && isValid) {setisValid(false)}
+  if (longEnough && validEmail && passMatch && lowerCaseV && upperCaseV && numberV && symbolV && base!== undefined && !isValid) {setisValid(true)}else if ((!longEnough || !validEmail || !passMatch|| !lowerCaseV || !upperCaseV || !numberV|| !symbolV) && isValid) {setisValid(false)}
+  
+  useEffect(() => {
+    console.log("#READ DATABASE")
+    const ref = query(collection(db, "DODAACS"))
+    //getDocs(ref).then(base => {base.docs.map(doc => setBase(doc.data()))}) WORK UNSUBSCRIBE
+    collectionData(ref, {idField: 'id'}).subscribe(bases => setBases(bases.reduce((unique,o) => {
+      if(!unique.some(obj => obj.base === o.base)) {unique.push(o)} return unique},[])))
+  },[])
+
   const register = e => {
     e.preventDefault()
     setError('')
@@ -53,8 +61,11 @@ function Register() {
     .then(() => {
       console.log("#WROTE DATABASE")
       userMutation.mutate({
-        dodaac: dodaac,
-        uid: auth.currentUser.uid}
+        base: base,
+        area: "*",
+        lastChangedBase: new Date(),
+        uid: auth.currentUser.uid,
+      }
       )
       sendEmailVerification(auth.currentUser)   
       .then(() => {
@@ -95,9 +106,10 @@ function Register() {
             placeholder='Confirm password'
             onChange={e => setConfirmPassword(e.target.value)}/>
             
-            <select required onChange={e => setDodaac(e.target.value)}>
-              {dodaacs.status === "success" && dodaacs.data.docs.map(docSnap => 
-                    <option key={docSnap.data().dodaac}>{docSnap.data().dodaac}</option>
+            <select required onChange={e => {setBase(e.target.value)}}>
+            <option>Select Base..</option>
+              {bases !== undefined && bases.map(docSnap => 
+                    <option key={docSnap.base}>{docSnap.base}</option>
                   )}
             </select>
         <button disabled={!isValid} type='submit' id='registerButton'>Register</button>
@@ -108,9 +120,9 @@ function Register() {
           { !numberV && <p style={{color: 'red', margin: 0}}>Password must contain at least 1 number!</p>}
           { !symbolV && <p style={{color: 'red', margin: 0}}>Password must contain at least 1 symbol!</p>}
           { !passMatch && <p style={{color: 'red', margin: 0}}>Password must match!</p>}
-          { dodaac === '' && <p style={{color: 'red', margin: 0}}>You must select a DODAAC!</p>}
+          { base === undefined && <p style={{color: 'red', margin: 0}}>You must select a Base!</p>}
           <span><a href='/login' style={{textDecoration: "none", color: "#1976d2"}}>Login to existing Account </a></span>
-          <span><a href='/register-dodaac' style={{textDecoration: "none", color: "#1976d2"}}>Register New Dodaac</a></span>
+          <span><a href='/register-base' style={{textDecoration: "none", color: "#1976d2"}}>Register New Base</a></span>
         </form>  
       </div>
     </div>

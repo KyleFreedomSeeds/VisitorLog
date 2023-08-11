@@ -20,11 +20,9 @@ function RegisterDodaac() {
 
   function registerDodaac(data) {
     setError('')
-    const dodaacFormat = /^[A-Z]{2}[0-9]{4}/gmi.exec(data.dodaac)
-    if (dodaacFormat.input !== dodaacFormat[0]) {setError("DODAAC must be in the correct format. ex: FV4852")}
     dodaacs.data.map(dodaac => {
-      if (dodaac.dodaac === data.dodaac) {
-        setError("DODAAC already exists!")
+      if (dodaac.area === data.area && dodaac.base === data.base) {
+        setError("Area already exists!")
       }
       return null
     })
@@ -33,8 +31,7 @@ function RegisterDodaac() {
       console.log("#WROTE DATABASE")
       dodaacMutation.mutate({
         base: data.base.toUpperCase(),
-        dodaac: data.dodaac.toUpperCase(),
-        squadron: data.squadron.toUpperCase()
+        area: data.area.toUpperCase(),
       })
       navigate("/login")
       reset()
@@ -44,23 +41,17 @@ function RegisterDodaac() {
   return (
     <div className='center'>
       <div className='auth'>
-        <h1>Register New Dodaac</h1>
+        <h2>Register New Base/Area</h2>
         {error && <div className='auth__error'>{error}</div>}
         <form onSubmit={handleSubmit(registerDodaac)} name='dodaac_registration_form'>
           <input 
             type='text'
             id="formDodaac"
             name="formDodaac"
-            placeholder="Enter DODAAC (FV4852)"
+            placeholder="Enter Area (57 MUNS MSA)"
             required
-            maxLength={6}
-            {...register("dodaac")}/>
-            
-          <input 
-            type='text'
-            required
-            placeholder='Enter Squadron (57 MUNS)'
-            {...register("squadron")}/>
+            maxLength={15}
+            {...register("area")}/>
 
             <input 
             type='text'
@@ -68,7 +59,7 @@ function RegisterDodaac() {
             placeholder='Enter Base (Nellis AFB)'
             {...register("base")}/>
             
-          <button type='submit'>Register DODAAC</button>
+          <button type='submit'>Register Base/Area</button>
         </form>
       </div>
     </div>
