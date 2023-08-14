@@ -2,7 +2,7 @@ import {BrowserRouter as Router, Routes, Route} from 'react-router-dom'
 import {useState, useEffect, lazy} from 'react'
 import {AuthProvider} from './AuthContext'
 import {auth, db} from 'lib/firebase'
-import {onIdTokenChanged} from 'firebase/auth'
+import { onIdTokenChanged} from 'firebase/auth'
 import PrivateRoute from './PrivateRoute'
 import {Navigate} from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -10,7 +10,7 @@ import { FirebaseAppProvider } from 'reactfire';
 import { firebaseConfig } from 'lib/firebase';
 import { Suspense } from 'react';
 import "css/loadingWheel.css"
-import { collectionData } from 'rxfire/firestore'
+import { collectionData, collection as collectionrx } from 'rxfire/firestore'
 import { collection, getDocs, orderBy, query, where } from 'firebase/firestore'
 import { VisitorProvider } from 'VisitorContext'
 import moment from 'moment'
@@ -32,6 +32,9 @@ function App() {
   const [timeActive, setTimeActive] = useState(new Date())
   const [dodaac, setDodaac] = useState(undefined)
   const [base, setBase] = useState([])
+  const [bases, setBases] = useState()
+  const [userDocs, setUserDocs] = useState()
+
   var timeout = moment(timeActive).add(1, 'hour').toDate()
   var timeoutWarn = moment(timeActive).add(55, 'minutes').toDate()
   const filter = moment(new Date()).subtract(2, "days").toDate()
@@ -61,15 +64,24 @@ function App() {
     if (currentUser?.emailVerified) {
       console.log("#READ DATABASE")
       const dodaacRef = query(collection(db, "users"), where("uid", "==", currentUser.uid))
-      getDocs(dodaacRef).then((dodaacQuery) => dodaacQuery.docs.map(doc => setDodaac(doc.data())))
-    }  
+      getDocs(dodaacRef).then((dodaacQuery) => dodaacQuery.docs.map(doc => {setDodaac(doc.data()); setUserDocs(doc)}))
+    }
+
+    console.log("#READ DATABASE")
+    const ref = query(collection(db, "DODAACS"))
+    getDocs(ref).then(base => {
+      const bases = []
+      base.docs.map(base => {bases.push(base.data())})
+      setBases(bases.reduce((unique,o) => {
+        if(!unique.some(obj => obj.base === o.base)) {unique.push(o)} return unique},[]))
+    })
   },[currentUser])
 
   return (
     <FirebaseAppProvider firebaseConfig={firebaseConfig}>
     <QueryClientProvider client={queryClient}>
     <AuthProvider value={{currentUser, timeActive, setTimeActive, timeout, timeoutWarn}}>
-    <VisitorProvider value={{visitors, base, visitorsQuery, setDodaac}}>
+    <VisitorProvider value={{visitors, base, visitorsQuery, setDodaac, bases, userDocs}}>
       <Router>
       <Suspense fallback={<div className="loading-wheel"></div>}>
         <Routes>

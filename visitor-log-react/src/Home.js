@@ -40,7 +40,6 @@ function Home() {
         if (visitorInfo !== null) {
           submitBarcode.reset()
           document.getElementById("closeBarcode").click()
-          // implement multi visitor single location
           document.getElementById("manualSubmit").click()
           if ("FMN" in visitorInfo) {
             submitVisitor.setValue("name", visitorInfo["FMN"])

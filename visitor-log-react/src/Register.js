@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react'
+import { useState} from 'react'
 import 'css/forms.css'
 import {auth, db} from 'lib/firebase'
 import {useNavigate} from 'react-router-dom'
@@ -7,16 +7,15 @@ import {useAuthValue} from './AuthContext'
 import { handleFirebaseError } from 'lib/firebase'
 import { collection, query } from "firebase/firestore"
 import { useFirestoreCollectionMutation} from '@react-query-firebase/firestore'
-import { collectionData } from 'rxfire/firestore'
+import { useVisitors } from 'VisitorContext'
 
 
 function Register() {
-
+  const {bases} = useVisitors()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [base, setBase] = useState('')
-  const [bases, setBases] = useState()
   const [error, setError] = useState('')
   const [longEnough, setLongEnough] = useState(false)
   const [validEmail, setValidEmail] = useState(false)
@@ -44,14 +43,6 @@ function Register() {
   if (email.substring(email.length - 4, email.length) === ".mil" && !validEmail) {setValidEmail(true)}else if(email.substring(email.length - 4, email.length) !== ".mil" && validEmail){setValidEmail(false)}
   if (password !== '' && confirmPassword !== '' && password === confirmPassword && !passMatch){setPassMatch(true)}else if (password !== '' && confirmPassword !== '' && password !== confirmPassword && passMatch){setPassMatch(false)}
   if (longEnough && validEmail && passMatch && lowerCaseV && upperCaseV && numberV && symbolV && base!== undefined && !isValid) {setisValid(true)}else if ((!longEnough || !validEmail || !passMatch|| !lowerCaseV || !upperCaseV || !numberV|| !symbolV) && isValid) {setisValid(false)}
-  
-  useEffect(() => {
-    console.log("#READ DATABASE")
-    const ref = query(collection(db, "DODAACS"))
-    //getDocs(ref).then(base => {base.docs.map(doc => setBase(doc.data()))}) WORK UNSUBSCRIBE
-    collectionData(ref, {idField: 'id'}).subscribe(bases => setBases(bases.reduce((unique,o) => {
-      if(!unique.some(obj => obj.base === o.base)) {unique.push(o)} return unique},[])))
-  },[])
 
   const register = e => {
     e.preventDefault()
