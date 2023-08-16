@@ -2,7 +2,7 @@ import {BrowserRouter as Router, Routes, Route} from 'react-router-dom'
 import {useState, useEffect, lazy} from 'react'
 import {AuthProvider} from './AuthContext'
 import {auth, db} from 'lib/firebase'
-import { onIdTokenChanged} from 'firebase/auth'
+import { onAuthStateChanged, onIdTokenChanged} from 'firebase/auth'
 import PrivateRoute from './PrivateRoute'
 import {Navigate} from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -40,30 +40,35 @@ function App() {
   const filter = moment(new Date()).subtract(2, "days").toDate()
   const visitorsQuery = useRef(0)
   useEffect(() => {
-    onIdTokenChanged(auth, (user) => {
+    onAuthStateChanged(auth, (user) => {
       setCurrentUser(user)
       setTimeActive(new Date())
     })
+
   },[])
 
   useEffect(() => {
-    if (currentUser?.emailVerified) {
+    if (auth.currentUser?.emailVerified) {
       console.log("#READ DATABASE")
       var baseRef = ''
-      if (dodaac.area === "*") { baseRef = query(collection(db, "DODAACS"), where("base", "==", dodaac.base))} else {
-      baseRef = query(collection(db, "DODAACS"), where("base", "==", dodaac.base), where("area", "==", dodaac.area))}
+      if (dodaac?.area === "*") { baseRef = query(collection(db, "DODAACS"), where("base", "==", dodaac.base))} else {
+      baseRef = query(collection(db, "DODAACS"), where("base", "==", dodaac?.base), where("area", "==", dodaac?.area))}
       getDocs(baseRef).then(base => {base.docs.map(doc => setBase(doc.data()))})
 
       console.log("#READ DATABASE")
       const ref = query(collection(db, "visitors"), where("signedOut", "==", "null"), where("created", ">=", filter), where("base", "==", dodaac.base), where("area", "==", dodaac.area), orderBy("created"))
       visitorsQuery.current  = collectionData(ref, {idField: 'id'}).subscribe(visitors => setVisitors(visitors))
+
+      console.log("#READ DATABASE")
+      const dodaacRef = query(collection(db, "users"), where("uid", "==", auth.currentUser.uid))
+      getDocs(dodaacRef).then((dodaacQuery) => dodaacQuery.docs.map(doc => {setUserDocs(doc)}))
     }
   },[dodaac])
 
   useEffect(() => {
-    if (currentUser?.emailVerified) {
+    if (auth.currentUser?.emailVerified) {
       console.log("#READ DATABASE")
-      const dodaacRef = query(collection(db, "users"), where("uid", "==", currentUser.uid))
+      const dodaacRef = query(collection(db, "users"), where("uid", "==", auth.currentUser.uid))
       getDocs(dodaacRef).then((dodaacQuery) => dodaacQuery.docs.map(doc => {setDodaac(doc.data()); setUserDocs(doc)}))
     }
 
@@ -118,10 +123,15 @@ function App() {
         </Routes>
         </Suspense>
     </Router>
+    <div className='footer' style={{ margin: "0px", display: "flex", justifyContent: "center", flexDirection: "column", alignItems: "center", textAlign: "center", opacity: "0.5", bottom: "0", left: "0", right: "0", position: "fixed", marginTop: "1px"}}>
+    <p style={{margin: "0px"}}>Visitor Log v0.2 @TwoWO</p>
+    <p style={{margin: "0px", color: "red"}}>Until v1.0, Visitor Log is considered beta and should not be used as an official source for documenting visitors. Upon v1.0, all data from the beta phase will be wiped</p>
+    </div>
   </VisitorProvider>
   </AuthProvider>
   </QueryClientProvider>
   </FirebaseAppProvider>
+  
   );
 }
 

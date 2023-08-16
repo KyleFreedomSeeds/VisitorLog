@@ -18,7 +18,8 @@ function VerifyEmail() {
       .then(() => {
         if(currentUser?.emailVerified){
           clearInterval(interval)
-          navigate('/')
+          auth.signOut()
+          navigate("/login")
         }
       })
       .catch((err) => {
@@ -54,6 +55,9 @@ function VerifyEmail() {
     <div className='center'>
       <div className='verifyEmail'>
         <h1>Verify your Email Address</h1>
+        {currentUser?.emailVerified ? 
+        <span><a href='/login' onClick={() => auth.signOut()} style={{textDecoration: "none", color: "#1976d2"}}>Email Verified! Login</a></span> :
+        <>
         <p>
           <strong>A Verification email has been sent to:</strong><br/>
           <span>{currentUser?.email}</span>
@@ -62,7 +66,8 @@ function VerifyEmail() {
         <button 
           onClick={resendEmailVerification}
           disabled={timeActive}
-        >Resend Email {timeActive && time}</button>
+        >Resend Email {timeActive && time}</button></>
+        }
       </div>
     </div>
   )

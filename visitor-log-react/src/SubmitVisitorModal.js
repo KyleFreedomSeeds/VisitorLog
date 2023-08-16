@@ -10,7 +10,7 @@ import { useAuthValue } from "AuthContext"
 import { useState } from "react"
 
 
-function SubmitvisitorModal({submitPopupOpen, closeSubmitModal, setSubmitPopupOpen, setBarcodePopupOpen}) {
+function SubmitvisitorModal({submitPopupOpen, closeSubmitModal, setSubmitPopupOpen, setBarcodePopupOpen, disabled}) {
   const {setTimeActive} = useAuthValue()
   const ref = collection(db, "visitors")
   const mutation = useFirestoreCollectionMutation(ref)
@@ -18,7 +18,7 @@ function SubmitvisitorModal({submitPopupOpen, closeSubmitModal, setSubmitPopupOp
   const {visitors, base} = useVisitors()
   const [visitorLoc, setVisitorLoc] = useState(["", "", ""])
   const [existingOrg, existingDest, existingEscort] = visitorLoc
-  
+
   async function submit(data) {
     console.log(data.multiple)
     setTimeActive(new Date())
@@ -88,7 +88,7 @@ function SubmitvisitorModal({submitPopupOpen, closeSubmitModal, setSubmitPopupOp
 
   return (
     <>
-    <button id="manualSubmit" onClick={() => setSubmitPopupOpen(o => !o)}>Manual Submit</button>
+    <button disabled={disabled} id="manualSubmit" onClick={() => setSubmitPopupOpen(o => !o)}>Manual Submit</button>
     <Popup modal closeOnDocumentClick={false} open={submitPopupOpen} className="visitors" onOpen={() => {if(getValues("name") !== "") {document.getElementById("formbadge").focus()}else(document.getElementById('formName').focus())}} onClose={() => {reset()}}>
       {
         <div>

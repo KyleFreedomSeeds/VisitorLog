@@ -19,7 +19,7 @@ import Profile from 'Profile'
 
 function Home() {
   const {currentUser, setTimeActive} = useAuthValue()
-  const {visitors, visitorsQuery, base} = useVisitors()
+  const {visitors, visitorsQuery, base, userDocs} = useVisitors()
   const submitVisitor = useForm()
   const submitBarcode = useForm()
   const signOutVisitor = useForm()
@@ -51,20 +51,20 @@ function Home() {
       })
     }
   }
+ 
   const name = currentUser.email.split(".")
   var profileName = name[0].charAt(0).toUpperCase() + name[0].slice(1) + " "
   if (name[1].indexOf("@") === -1) {profileName = profileName + name[1].charAt(0).toUpperCase() + name[1].slice(1)} else {profileName = profileName + name[1].charAt(0).toUpperCase() + name[1].slice(1, name[1].indexOf("@"))}
-
   return (
       <div className="body">
         <div className="header">
           <h1>Visitor Log</h1>
-          <h3>{base.base} -- {base.area}</h3>
+          <h3>{base.base} -- {userDocs === "undefined" || userDocs?.data().area === "*" ? "YOU MUST CONFIGURE AN AREA" : base.area}</h3>
           <p>{profileName}<span onClick={() => {setProfilePopupOpen(true)}}>Profile</span><span onClick={() => {visitorsQuery.current.unsubscribe(); signOut(auth)}}>Sign Out</span></p>
           <Profile profilePopupOpen={profilePopupOpen} setProfilePopupOpen={setProfilePopupOpen} closeProfile={closeProfile}/>
         </div>
         <div className="buttons">
-        <button id="scanBarcode" onClick={() => setBarcodePopupOpen(o => !o)}>Scan ID</button>
+        <button disabled={userDocs?.data().area === "*"} id="scanBarcode" onClick={() => setBarcodePopupOpen(o => !o)}>Scan ID</button>
         <Popup closeOnDocumentClick={false} modal className="visitors" open={barcodePopupOpen} onOpen={() => document.getElementById("formBarcode").focus()} onClose={() => submitBarcode.reset()}>
             {
               <div>
@@ -80,9 +80,9 @@ function Home() {
             }
           </Popup>
           <FormProvider {...submitVisitor}>
-            <SubmitvisitorModal setBarcodePopupOpen={setBarcodePopupOpen} submitPopupOpen={submitPopupOpen} closeSubmitModal={closeSubmitModal} setSubmitPopupOpen={setSubmitPopupOpen}/>
+            <SubmitvisitorModal setBarcodePopupOpen={setBarcodePopupOpen} submitPopupOpen={submitPopupOpen} closeSubmitModal={closeSubmitModal} setSubmitPopupOpen={setSubmitPopupOpen} disabled={userDocs?.data().area === "*"}/>
           </FormProvider>
-          <Popup trigger={<button>Sign Visitor Out</button>} modal closeOnDocumentClick={false} className='visitors' onOpen={() => document.getElementById("formBadgeOut").focus()} onClose={() => signOutVisitor.reset()}>
+          <Popup trigger={<button disabled={userDocs?.data().area === "*"}>Sign Visitor Out</button>} modal closeOnDocumentClick={false} className='visitors' onOpen={() => document.getElementById("formBadgeOut").focus()} onClose={() => signOutVisitor.reset()}>
           {
             close => (
               <div>
@@ -97,7 +97,7 @@ function Home() {
               </div>
             )}
           </Popup>
-          <Popup trigger={<button>Generate 1109</button>}>
+          <Popup trigger={<button disabled={userDocs?.data().area === "*"}>Generate 1109</button>}>
             <ReactDatePicker required form="generate1109" placeholderText='Select 1109 Date Range' selectsRange={true} onChange={(update) => {setDateRange(update); setDateError(false)}} startDate={startDate} endDate={endDate} className='datePicker1109'/>
             <form id="generate1109" onSubmit={(e) => e.preventDefault()}>
                 {dateError ? <p style={{color: "red", fontSize: "10pt"}}>Please select a date range!</p> : null}
